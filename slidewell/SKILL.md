@@ -1,6 +1,7 @@
 ---
 name: slidewell
-description: Build consulting-grade PowerPoint decks (.pptx) that tell a clear story and pass a strict design QA: findings, recommendations, options appraisals, progress updates and steering-group packs, and facilitated workshops, or a styled template of the slides the user needs. Use whenever the user wants a presentation, deck, slides, or a single slide created, restructured, redesigned, or fixed; wants slides matched to a client's brand or template; wants alternative versions of a slide; or wants workshop materials (agenda, exercises, capture slides, post-session share version). Use it even if they don't say "PowerPoint", and even for "just tidy up this slide".
+description: Build and revise consulting-grade PowerPoint (.pptx) decks that tell a clear story and pass a strict finishing check: recommendations, findings, options appraisals, board and steering-group papers, proposals, pitches and facilitated workshops, or a styled template of the slides needed. Use when the user wants a PowerPoint deck or .pptx slides written, restructured, redesigned, checked or fixed, matched to a brand or .pptx/.potx template, offered as alternative versions, or built for a workshop (agenda, exercises, capture slides, share version). Also use for "make me a deck" or "slides for the board" when no other format is named. Not for Google Slides, Keynote, HTML or web slides, or a deck the user asked to make in another named tool or format.
+license: MIT (see LICENSE). Copyright (c) 2026 Ben Marshall
 ---
 
 # Slidewell
@@ -24,7 +25,7 @@ Slidewell builds decks the way a strong strategy consultant does: **story first,
 | `scripts/render.py` | Every visual QA pass: slide images + a contact sheet of the whole deck |
 | `scripts/compare_versions.py` | After every revision: lists every change, flags changes on slides you weren't asked to touch |
 | `scripts/slidekit.py` | When building: helpers that apply the finishing standard automatically (wrapping, bullets, distribution, fixed positions, corners, labels, animation). Read its docstring first |
-| `examples/` | When you want a concrete reference: nine fictional decks (pitch, case for action, findings and recommendations, proposal, two workshops, animation options, and more) with the build scripts that made them; the README lists what each shows |
+| `examples/` | When you want a concrete reference: ten fictional decks (pitch, case for action, findings and recommendations, proposal, a steering-group update built inside a corporate template, two workshops, animation options, and more) with the build scripts that made them; the README lists what each shows |
 
 ## Choose the mode
 
@@ -34,7 +35,6 @@ Slidewell builds decks the way a strong strategy consultant does: **story first,
 | Changes to existing slides | **B. Revise** |
 | Several alternative versions of a slide | **C. Options** |
 | A post-workshop version with the session's input | **D. Share version** |
-
 | A styled, empty template of the slides they'll need, to fill in themselves | **E. Template** |
 
 Modes combine (e.g., a new deck with options for the executive summary).
@@ -42,6 +42,14 @@ Modes combine (e.g., a new deck with options for the executive summary).
 ---
 
 ## A. New deck
+
+### Short decks: the fast path
+For **five content slides or fewer** (a one-pager, a short update, a single decision slide, "just three slides on X"), keep the same gates but a lighter route, because the full reference set costs more than the deck is worth:
+- **Intake:** ask only Round 1 of `references/intake.md`, in one message; skip Round 2 unless the answer leaves the look or audience unclear.
+- **Storyline:** propose the headlines and what proves each, in a few lines. Read `references/storytelling.md` §2 (pyramid) and §6 (headlines) only; skip storyline-examples.md.
+- **Build:** read only the sections of `references/layout-patterns.md` and `references/charts.md` for the patterns you'll use. Read finishing-standard.md §1–2 and §9 (content, text, numbers); `slidekit.py` applies most rules automatically.
+- **QA:** run `check_deck.py` (including `--numbers`) and one render-and-look pass; one review round instead of up to three.
+- Tell the user you're using the short route, and offer the full route if the deck is high-stakes.
 
 ### 1. Intake
 Read `references/intake.md` and run its two short rounds **before proposing or mocking up anything**. Don't ask what the user has already stated, but never skip a Round 1 question on an inference: if the request doesn't say whether the deck will be read or presented, how long it is, or who it's for, ask. Do offer your best guess as the proposed answer, so the user can just confirm it. Assumptions are allowed only when the user has said to just go or isn't there to answer.
@@ -77,13 +85,13 @@ The theme must be **specific to this deck**: drawn from the subject's brand, mot
 **If the user gives a reference deck to follow or be "inspired by"**, ask which they want, and show both at the look checkpoint: (a) **close to the reference**: its layout grid, header treatment, colour roles, imagery density, and icon style, with only the brand, names, and content changed; or (b) **a new look** for this deck. Don't assume (b) because the content is new: people who share a deck they like usually want its style kept.
 
 Source the theme in this order:
-1. **The user's template** (.pptx/.potx): use its masters, layouts, and placeholders. Read its existing slides for conventions (breadcrumb style, source position, page numbers, box styles) and copy them.
+1. **The user's template** (.pptx/.potx): use its masters, layouts, and placeholders. Read its existing slides for conventions (breadcrumb style, source position, page numbers, box styles) and copy them. Build with `Kit(theme, template="their.pptx")`: it removes the template's slides, keeps its masters and layouts, and reads its colours, fonts, headline position and footer into the theme. Then `kit.new_slide("Title only")` uses a named layout, `kit.frame()` puts the headline in the title placeholder, `kit.fill(slide, "body", bullets=[...])` keeps the template's own bullet styles, and `kit.move()` repositions a placeholder safely. See `examples/build_brackwater_update.py`.
 2. **The subject's brand**: if there's no template, match the brand of the organization the deck is *about or for* (this is how the best decks feel native to the client). Follow `references/visual-identity.md`: choose a palette strategy, find a brand motif (ask the user; if they have none in mind, mock up two or three options as images and let them choose), pair fonts, and bookend the deck. Use the logo colors, brand guidelines, or website the user provides, or look them up. Choose 1–2 main colors and up to 4 accents, a headline font and a body font (or one family), and an image style. Use logos only if the user supplies them or confirms they may be used. For photos, logos, and icons, follow visual-identity §4b–4c: every photo has a role, text on photos gets an overlay, and missing photos become labelled placeholder frames at their final size.
 3. **Neutral default**: white background, one deep main color (e.g., navy), one accent, a clean sans-serif (e.g., Inter or Arial), generous margins.
 
 The spec must include: slide size (16:9 default), outer margins, the headline band (position, size, color, max two lines), breadcrumb style and position, body text sizes per tier, source/footnote position and size, page-number position, palette with each color's purpose, box styles (fill, border, corner, padding), the shape vocabulary (which shape or style means what, e.g. highlight pills, callouts, rating markers; see visual-identity §4b), chart styling, and the gutter unit.
 
-**Fonts:** check which fonts are available for rendering (`fc-list`). If the brand font isn't installed, renders will substitute it, which changes text widths and can create false overflow or hide real overflow. Either use a font available on both sides, or keep generous slack in text boxes (~10–15%) and tell the user to check text fit on their own machine. Ask (intake Q8) whether the brand font is on the presenting machine. When you have a free choice, prefer fonts the user is likely to have *and* that have exact-metric stand-ins for rendering here (Arial ↔ Liberation Sans, Times New Roman ↔ Liberation Serif, Cambria ↔ Caladea): text then wraps identically in your checks and on their machine.
+**Fonts:** check which fonts are available for rendering (`fc-list`, or the system font folder on a Mac or Windows). If the brand font isn't installed, renders will substitute it, which changes text widths and can create false overflow or hide real overflow. Either use a font available on both sides, or keep generous slack in text boxes (~10–15%) and tell the user to check text fit on their own machine. Ask (intake Q8) whether the brand font is on the presenting machine. When you have a free choice, prefer fonts the user is likely to have *and* that have exact-metric stand-ins for rendering here (Arial ↔ Liberation Sans, Times New Roman ↔ Liberation Serif, Cambria ↔ Caladea): text then wraps identically in your checks and on their machine.
 
 ### 4. Build
 **Tell the user how long it will take and roughly how much usage it needs, before you start.** Give a range and how confident you are. Base it on measured builds, not on how long the work feels:
@@ -107,7 +115,7 @@ Build native, editable .pptx with python-pptx (`pip install python-pptx` if miss
 ### 5. QA loop (delivery gate)
 Run the full loop in `references/qa.md` on every slide before delivering anything. In short:
 1. `python scripts/check_deck.py deck.pptx`: fix every error; review every warning.
-2. `python scripts/render.py deck.pptx`: look at every slide, then the contact sheet.
+2. `python scripts/render.py deck.pptx`: look at every slide, then the contact sheet. If it exits with VISUAL REVIEW UNAVAILABLE (LibreOffice or Poppler missing, common in Claude Code on a laptop), don't try to install them unasked: finish every other check, deliver, and tell the user in one line that the visual review was skipped and how to enable it.
 3. Hunt for failures against the per-slide checklist (`qa.md`), `references/finishing-standard.md`, and `references/charts.md`.
 4. Accuracy pass: `check_deck.py --numbers`, then re-derive every computed figure in code and assert it in the build script.
 5. Fix, re-render, restart the checklist for the whole slide; repeat until clean. Then the deck-level checklist.

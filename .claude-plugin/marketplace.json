@@ -1,0 +1,16 @@
+{
+  "name": "slidewell",
+  "description": "Consulting-grade PowerPoint decks: storyline first, every slide checked before delivery.",
+  "owner": {
+    "name": "Ben Marshall"
+  },
+  "plugins": [
+    {
+      "name": "slidewell",
+      "source": ".",
+      "description": "Build and revise consulting-grade PowerPoint (.pptx) decks: the storyline is approved before building, and every slide is checked against a finishing standard before delivery.",
+      "category": "productivity",
+      "tags": ["powerpoint", "pptx", "presentations", "slides", "consulting"]
+    }
+  ]
+}

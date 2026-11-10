@@ -1,0 +1,9 @@
+__pycache__/
+*_render/
+dist/
+decisions-log.md
+chart-answers.md
+.DS_Store
+build/
+*.egg-info/
+.pytest_cache/

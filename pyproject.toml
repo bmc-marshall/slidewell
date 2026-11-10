@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "slidewell"
+version = "1.0.0"
+description = "Slidewell's deck checker, renderer and version comparison for PowerPoint (.pptx) files"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Ben Marshall" }]
+requires-python = ">=3.9"
+dependencies = ["python-pptx>=1.0.2,<2", "lxml>=5.0", "Pillow>=10.0"]
+keywords = ["powerpoint", "pptx", "lint", "presentation", "slides", "accessibility"]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Office/Business :: Office Suites",
+]
+
+[project.urls]
+Homepage = "https://github.com/bmc-marshall/slidewell"
+
+[project.scripts]
+slidewell-check = "check_deck:main"
+slidewell-render = "render:main"
+slidewell-compare = "compare_versions:main"
+
+[tool.setuptools]
+package-dir = { "" = "slidewell/scripts" }
+py-modules = ["check_deck", "render", "compare_versions", "slidekit", "sw_fonts"]

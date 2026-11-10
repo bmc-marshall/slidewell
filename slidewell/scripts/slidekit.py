@@ -928,7 +928,7 @@ class Kit:
         gap = (bottom - top - block_h) / 2 + self.T["gap"]          # visible space above (and below) the block
         if gap < self.T.get("min_gap", 0.7) - 0.01:
             print(f"slidekit: content block {block_h:.2f} in leaves only {gap:.2f} in above and below it "
-                  f"(want >= {self.T.get("min_gap", 0.7)} in): make the block smaller", file=sys.stderr)
+                  f"(want >= {self.T.get('min_gap', 0.7)} in): make the block smaller", file=sys.stderr)
         return top + max(0, (bottom - top - block_h) / 2)
 
     # ------------------------------------------------------------------ charts

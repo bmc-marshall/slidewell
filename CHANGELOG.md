@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1 — November 2026
+
+- Checker: small trend lines inside KPI tiles (line charts under 1.7 in tall with no category axis) may hide their axes; the chart guide explains the exception.
+- Fixed a line in the build library that only worked on Python 3.12 and later; tests now run on Python 3.10 and 3.12.
+- Showcase slides moved out of the skill to `docs/showcase/`, where they build the README and social-preview images.
+
 ## 1.0.0 — November 2026
 
 First public release.

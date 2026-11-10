@@ -8,7 +8,7 @@
 
 Give Claude your notes, data or a rough brief. Slidewell asks a few sharp questions, proposes the storyline headline by headline for you to approve, then builds a native, fully editable `.pptx` in your brand or inside your own template, and checks it before you open it.
 
-![Five slides built by Slidewell: a profit bridge, a KPI dashboard, a scenario forecast, a PESTLE scan, and an annotated seasonal chart](docs/images/hero.png)
+![Five slides built by Slidewell: a profit bridge, a KPI dashboard, an annotated seasonal chart, a PESTLE scan, and an executive summary](docs/images/hero.png)
 
 <sub>All slides above are from `slidewell/examples/showcase.pptx`, built and checked by Slidewell. Every organisation and figure is fictional.</sub>
 

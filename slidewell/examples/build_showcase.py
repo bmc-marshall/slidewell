@@ -331,8 +331,8 @@ nav = [("Overview", False), ("Programme", True), ("Audiences", False), ("Value",
 nx = 4.3
 for k, (t_, on) in enumerate(nav):
     txt(s, nx + k * 1.3, 0.3, 1.25, 0.28, t_, 11, BURG if on else rgb("A3A3A3"), bold=on, align=C, smart=False)
-txt(s, 0.6, 0.72, 12.1, 1.0, "New releases fill the busy months, but a curated programme could lift the two quiet "
-    "seasons", 26, BURG, bold=True)
+txt(s, 0.6, 0.72, 12.1, 1.0, "Big releases carry us through summer and winter, but spring and autumn need films "
+    "we choose ourselves", 26, BURG, bold=True)
 months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 lo = [9, 7, 6, 5, 5, 7, 9, 9, 4, 5, 7, 10]; hi = [14, 11, 12, 8, 8.5, 12, 15, 14, 8, 9, 12, 16]
 med = [12, 8.5, 9, 6.5, 6.8, 9.5, 12.5, 12, 5.5, 6.5, 9, 13.5]
@@ -626,8 +626,7 @@ page_no(s, 13, T["grey"])
 # Brand: Fenwick Foods, an (invented) food manufacturer. Deep green, fresh green gains, coral for the cost.
 DG14, G14, CORAL14 = rgb("0B3D2E"), rgb("3BA55D"), rgb("E4572E")
 s = kit.new_slide()
-txt(s, 0.6, 0.5, 12.1, 1.0, "Four levers take operating profit from £18M to £31M by 2028, and pricing is the "
-    "biggest of them", 26, DG14, bold=True)
+txt(s, 0.6, 0.5, 12.1, 1.0, "We can grow profit from £18M to £31M by 2028, with pricing alone worth £5.5M", 26, DG14, bold=True)
 steps = [("Today", 18, "total"), ("Pricing", 5.5, "up"), ("Procurement", 3.5, "up"), ("Product mix", 2.5, "up"),
          ("Automation", 2.5, "up"), ("Investment", -1.0, "down"), ("2028", 31, "total")]
 run_ = 0; base, val = [], []
@@ -865,8 +864,8 @@ def exec_summary(s, dark, n):
         else:
             kit.shape(s, MSO_SHAPE.RECTANGLE, 0.6, y, W - 1.2, rh, rgb("F1F6F7"))
         kit.shape(s, MSO_SHAPE.RECTANGLE, 0.6, y, 0.09, rh, MINT19)
-        kit.shape(s, MSO_SHAPE.OVAL, 0.95, y + (rh - 0.52) / 2, 0.52, 0.52, MINT19)
-        txt(s, 0.95, y + (rh - 0.52) / 2, 0.52, 0.52, num, 18, PETROL, bold=True, align=C, anchor=MID, smart=False)
+        kit.shape(s, MSO_SHAPE.OVAL, 0.95, y + (rh - 0.52) / 2, 0.52, 0.52, rgb("1F8A70"))
+        txt(s, 0.95, y + (rh - 0.52) / 2, 0.52, 0.52, num, 18, WHITE, bold=True, align=C, anchor=MID, smart=False)
         txt(s, 1.75, y + 0.1, 7.6, 0.4, lead, 20, head, bold=True, smart=False)
         txt(s, 1.75, y + 0.48, 7.6, 0.38, rest, 16, body, smart=False)
         kit.line(s, 9.65, y + 0.16, 9.65, y + rh - 0.16, rgb("3E7383") if dark else rgb("C9D8DC"), 1)

@@ -4,7 +4,7 @@
 [![licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
 [![Claude skill](https://img.shields.io/badge/Claude-skill-c96442.svg)](#install)
 
-**Consulting-grade PowerPoint decks from Claude. The story is agreed before anything is built, and every slide is checked before you see it.**
+**Consulting-grade PowerPoint decks with Claude. The story is agreed before anything is built, and every slide is checked before you see it.**
 
 Give Claude your notes, data or a rough brief. Slidewell asks a few sharp questions, proposes the storyline headline by headline for you to approve, then builds a native, fully editable `.pptx` in your brand or inside your own template, and checks it before you open it.
 

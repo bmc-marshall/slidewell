@@ -626,7 +626,7 @@ page_no(s, 13, T["grey"])
 # Brand: Fenwick Foods, an (invented) food manufacturer. Deep green, fresh green gains, coral for the cost.
 DG14, G14, CORAL14 = rgb("0B3D2E"), rgb("3BA55D"), rgb("E4572E")
 s = kit.new_slide()
-txt(s, 0.6, 0.5, 12.1, 1.0, "We can grow profit from £18M to £31M by 2028, with pricing alone worth £5.5M", 26, DG14, bold=True)
+kit.text(s, 0.6, 0.5, 12.1, 1.0, "We can grow profit from £18M to £31M by 2028, with pricing alone worth £5.5M", 26, DG14, bold=True, headline=True)
 steps = [("Today", 18, "total"), ("Pricing", 5.5, "up"), ("Procurement", 3.5, "up"), ("Product mix", 2.5, "up"),
          ("Automation", 2.5, "up"), ("Investment", -1.0, "down"), ("2028", 31, "total")]
 run_ = 0; base, val = [], []

@@ -21,4 +21,4 @@ The instructions are written for Claude to follow, in plain English: say what to
 
 ## Releases
 
-Bump the version in `.claude-plugin/plugin.json` and `pyproject.toml`, add a line to `CHANGELOG.md`, and push a tag like `v1.1.0`. The workflow attaches `slidewell.zip` to the GitHub release.
+Bump the version in `.claude-plugin/plugin.json` and `pyproject.toml`, add a line to `CHANGELOG.md`, and publish a release on GitHub with a new tag like `v1.1.0`. The workflow attaches `slidewell.zip` to the release.

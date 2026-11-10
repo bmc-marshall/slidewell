@@ -26,11 +26,7 @@ Then, in the repo's **Settings → General → Social preview**, upload `docs/im
 
 ## 3. First release
 
-```bash
-git tag v1.0.0 && git push --tags
-```
-
-The workflow builds `slidewell.zip` and attaches it to the release. That's the file claude.ai users download.
+On the repo page, click **Releases → Draft a new release**. Under "Choose a tag", type `v1.0.0` and pick "Create new tag on publish". Title it "Slidewell 1.0.0" and click **Publish release**. Within a few minutes, the workflow attaches `slidewell.zip`. That's the file claude.ai users download.
 
 ## 4. Check the installs work
 

@@ -324,8 +324,8 @@ for cx, n, lines, cur in stops:
 txt(s, W - 1.2, 6.95, 0.6, 0.3, "6", 10, rgb("F6C9CF"), align=R, anchor=BOT, smart=False)
 
 # =============================================================================================== 7. annotated chart
-# Brand: The Orpheum, an (invented) independent cinema. Burgundy with a cool teal for the opportunities.
-BURG, TEAL7, GREY7, SHADE = rgb("7A1E2C"), rgb("1F8A8A"), rgb("D9D9D9"), rgb("E6F4F3")
+# Brand: The Orpheum, an (invented) independent cinema. Deep slate with a cool teal for the opportunities.
+BURG, TEAL7, GREY7, SHADE = rgb("1D3A4A"), rgb("1F8A8A"), rgb("D9D9D9"), rgb("E6F4F3")
 s = kit.new_slide()
 nav = [("Overview", False), ("Programme", True), ("Audiences", False), ("Value", False)]
 nx = 4.3

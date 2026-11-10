@@ -1,4 +1,4 @@
-"""Showcase: five standalone slides, each in its own (fictional) client's brand, showing the range of
+"""Showcase (not part of the skill): standalone slides, the source of the README and social-preview images, each in its own (fictional) client's brand, showing the range of
 Slidewell's slidecraft: bold-number pillars, a pictogram, a scenario chart, market-sizing bubbles, and
 organisation-design options. Every organisation, person and figure is invented.
 
@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parents[0] / "scripts"))
+sys.path.insert(0, str(HERE.parents[1] / "slidewell" / "scripts"))
 from lxml import etree  # noqa: E402
 from slidekit import Kit, CategoryChartData, rgb  # noqa: E402
 from pptx.enum.chart import XL_CHART_TYPE  # noqa: E402

@@ -21,7 +21,7 @@ SCRIPTS = SKILL / "scripts"
 EXAMPLES = SKILL / "examples"
 sys.path.insert(0, str(SCRIPTS))
 
-BUILDS = sorted(EXAMPLES.glob("build_*.py"))
+BUILDS = sorted(EXAMPLES.glob("build_*.py")) + sorted((ROOT / "docs" / "showcase").glob("build_*.py"))
 
 
 def check(pptx):

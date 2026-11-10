@@ -10,7 +10,7 @@ Give Claude your notes, data or a rough brief. Slidewell asks a few sharp questi
 
 ![Five slides built by Slidewell: a profit bridge, a KPI dashboard, an annotated seasonal chart, a PESTLE scan, and an executive summary](docs/images/hero.png)
 
-<sub>All slides above are from `slidewell/examples/showcase.pptx`, built and checked by Slidewell. Every organisation and figure is fictional.</sub>
+<sub>All slides above are from [`docs/showcase/showcase.pptx`](docs/showcase), built and checked by Slidewell. Every organisation and figure is fictional.</sub>
 
 ---
 

@@ -113,7 +113,7 @@ When you build a chart from shapes, compute positions from one scale function so
 - Leave clear space between the title and the plot.
 
 **Axes**
-- Keep the value axis (line and tick labels) even when every mark has a data label.
+- Keep the value axis (line and tick labels) even when every mark has a data label. The one exception is a **sparkline**: a small trend line inside a KPI tile, there to show direction rather than values, has no axes. *(Checked: the checker allows hidden axes only on line charts under 1.7 in tall with no category axis.)*
 - Axis line always visible; tick labels close to the axis without touching; edge labels centered on their gridline.
 - Value axes start at zero. A non-zero start is allowed on any chart **only if it's clearly labeled** (an axis break or a note).
 

@@ -848,7 +848,9 @@ def check_charts(deck, idx, infos, out):
             if "scatterChart" in kinds and pos is not None and pos.get("val") in ("b", "t"):
                 continue  # horizontal value axis of a scatter: not the measure axis
             deleted = ax.find("c:delete", NS)
-            if deleted is not None and deleted.get("val", "1") in ("1", "true"):
+            sparkline = "lineChart" in kinds and i.h < 1.7 * EMU_IN and all(
+                c.get("val", "1") in ("1", "true") for c in cs.findall(".//c:catAx/c:delete", NS))
+            if deleted is not None and deleted.get("val", "1") in ("1", "true") and not sparkline:
                 out.append(Finding("error", "charts", f"Value axis hidden in '{i.name}': keep the axis line and tick labels", idx))
                 continue
             ln = ax.find("c:spPr/a:ln", NS)

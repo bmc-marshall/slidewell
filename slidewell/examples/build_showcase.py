@@ -838,6 +838,53 @@ txt(s, 0.6, 6.95, 9, 0.3, "Source: membership system and quarterly survey (ficti
 txt(s, W - 1.2, 6.95, 0.6, 0.3, "18", 10, rgb("9CD8C0"), align=R, anchor=BOT, smart=False)
 
 
+# =============================================================================================== 19-20. executive summary
+# Brand: Merrow Transit, an (invented) regional bus operator. Petrol ink, mint and amber accents.
+# The same answer-first summary twice: on white (19) and on a deep colour field (20).
+PETROL, MINT19, AMB19, INK19 = rgb("0F3D4C"), rgb("4FC1A6"), rgb("F2A93B"), rgb("1E2A30")
+summary = [("1", "Two depots do the work of one", "The north-side depots are 3 miles apart and each runs at 55% capacity", "55%", "depot capacity used"),
+           ("2", "Merging them frees £4M", "Selling the Hallam site and sharing one workshop saves £1.1M a year", "£4M", "one-off sale value"),
+           ("3", "That pays for 12 electric buses", "Enough to electrify the two busiest routes, cutting fuel costs by a third", "12", "buses, two routes"),
+           ("4", "Service and jobs are protected", "No routes cut; all 140 staff move to the merged depot", "0", "routes or jobs lost")]
+
+
+def exec_summary(s, dark, n):
+    bg = PETROL if dark else WHITE
+    head = WHITE if dark else PETROL
+    body = rgb("D5E6EA") if dark else INK19
+    if dark:
+        kit.shape(s, MSO_SHAPE.RECTANGLE, 0, 0, W, H, PETROL)
+    txt(s, 0.6, 0.42, 6, 0.3, "EXECUTIVE SUMMARY", 14, MINT19, bold=True, smart=False)
+    txt(s, 0.6, 0.75, 12.1, 1.0, "We recommend merging the two north-side depots and using the £4M it frees to buy "
+        "12 electric buses", 26, head, bold=True)
+    y0, rh, rg = 2.2, 0.86, 0.13
+    for k, (num, lead, rest, big, cap) in enumerate(summary):
+        y = y0 + k * (rh + rg)
+        if dark:
+            kit.shape(s, MSO_SHAPE.RECTANGLE, 0.6, y, W - 1.2, rh, rgb("16505F"))
+        else:
+            kit.shape(s, MSO_SHAPE.RECTANGLE, 0.6, y, W - 1.2, rh, rgb("F1F6F7"))
+        kit.shape(s, MSO_SHAPE.RECTANGLE, 0.6, y, 0.09, rh, MINT19)
+        kit.shape(s, MSO_SHAPE.OVAL, 0.95, y + (rh - 0.52) / 2, 0.52, 0.52, MINT19)
+        txt(s, 0.95, y + (rh - 0.52) / 2, 0.52, 0.52, num, 18, PETROL, bold=True, align=C, anchor=MID, smart=False)
+        txt(s, 1.75, y + 0.1, 7.6, 0.4, lead, 20, head, bold=True, smart=False)
+        txt(s, 1.75, y + 0.48, 7.6, 0.38, rest, 16, body, smart=False)
+        kit.line(s, 9.65, y + 0.16, 9.65, y + rh - 0.16, rgb("3E7383") if dark else rgb("C9D8DC"), 1)
+        txt(s, 9.9, y + 0.04, 2.7, 0.55, big, 30, MINT19 if dark else rgb("1F8A70"), bold=True, smart=False)
+        txt(s, 9.9, y + 0.56, 2.7, 0.3, cap, 13, body, smart=False)
+    by = y0 + 4 * (rh + rg) + 0.04
+    kit.shape(s, MSO_SHAPE.RECTANGLE, 0.6, by, W - 1.2, 0.62, AMB19)
+    txt(s, 0.85, by, W - 1.7, 0.62, [[("Decision needed: ", True, rgb("3A2600")),
+        ("approve the depot merger and the £4M bus order before the March budget", False, rgb("3A2600"))]], 17, rgb("3A2600"), anchor=MID)
+    txt(s, W - 1.2, 6.95, 0.6, 0.3, str(n), 10, rgb("9FC3CC") if dark else T["grey"], align=R, anchor=BOT, smart=False)
+    txt(s, 0.6, 6.95, 9, 0.3, "Source: depot utilisation 2026; property valuation; fleet plan (fictional)", 10,
+        rgb("9FC3CC") if dark else T["grey"], anchor=BOT)
+
+
+s = kit.new_slide(); exec_summary(s, False, 19)
+s = kit.new_slide(); exec_summary(s, True, 20)
+
+
 out = HERE / "showcase.pptx"
 kit.save(str(out), title="Slidewell showcase")
 print(out)

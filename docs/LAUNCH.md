@@ -22,7 +22,7 @@ gh repo edit \
   --add-topic storytelling --add-topic pyramid-principle --add-topic workshop --add-topic ai-presentation
 ```
 
-Then, in the repo's **Settings → General → Social preview**, upload `docs/images/hero.png`. This is the image shown when the link is shared.
+Then, in the repo's **Settings → General → Social preview**, upload `docs/images/social-preview.png`. This is the image shown when the link is shared.
 
 ## 3. First release
 

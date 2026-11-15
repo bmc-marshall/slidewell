@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1 — November 2026
+
+- **The release zip uploads to claude.ai again.** The icons were bundled as a zip inside the skill, and claude.ai rejects a skill zip that contains another zip. They're now a plain folder of PNGs (`assets/icons/`); the SVG originals are on lucide.dev.
+- New tests: nothing inside the skill folder may be an archive, and icons load from the folder.
+
 ## 1.1.0 — November 2026
 
 From a real assignment: rebuilding two slides and adding three to an existing deck.

@@ -1,5 +1,5 @@
 # The 114 bundled icons (Lucide, ISC licence). Use the name with kit.icon(slide, name, ...).
-# Each is packed in icons.zip as png/<name>.png (used for building) and svg/<name>.svg (the vector original).
+# Each is a PNG mask in assets/icons/<name>.png, recoloured when used. The vector originals are at https://lucide.dev.
 activity
 arrow-right-left
 award

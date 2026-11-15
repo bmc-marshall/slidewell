@@ -28,9 +28,16 @@ The underlying goal: a deck that looks polished and calm, where nothing moves, c
 - **One point per slide**, stated in the headline (see `storytelling.md` for headline tests).
 - **Headline:** a message, not a topic; ≤2 lines; no exceptions. A large question or statement centred in the slide body (e.g., a question to the room) is body content, not the headline.
 - **Vertical logic:** every chart, textbox, table, callout, and source supports the headline. Remove anything that doesn't.
+- **Then take things off: supporting the headline isn't enough to earn a place.** Once a slide works, ask of each element: would the slide lose anything if this went? Remove it if it:
+  - **repeats something already on the slide.** A "so what" strap that restates the headline, or a callout repeating what a highlighted row already shows: the presenter can say it. The headline is the takeaway; don't write it twice.
+  - **shows the same numbers twice.** Use a chart *or* a table, not both, unless they show different data. Show each figure in one form, the one the comparison is about: percentages for relative differences (one town vs. a benchmark town), absolute values when the size itself matters. Don't add a table of raw values beneath a chart of percentages.
+  - **is out of scope for this decision.** If the decision is about one area, drop comparison items from outside it (sites in other towns, markets not under review), unless the headline is about the comparison.
+  - **doesn't fit this audience.** Context that persuades outsiders (a CEO quote, company background) is clutter for an internal audience that already knows it. Check the audience answer from intake before keeping it.
+  - **is a different level of detail.** Definitions, methodology, and caveats go in the footnote or the appendix, not the body.
+  *Why:* every extra element competes with the one point the slide makes. Slides built by AI tend to add (a quote, a strap, a back-up table) and rarely remove, so this pass has to be deliberate. When unsure whether to cut something, cut it and mention it in your reply so the user can bring it back.
 - **Horizontal logic:** headlines read in sequence tell the story.
 - **Visible hierarchy:** use at most one subhead, one subordinate comment, and one chart/table title per content block. Don't stack similar-weight textboxes that compete. Give section headlines, explanatory comments, column headers, and data/content distinct vertical bands. A reader should be able to tell which text is which level from its position and styling alone, without reading it.
-- **Sources, notes, and qualifiers** wherever a claim or figure needs one. Every slide with a chart or a table of numbers carries a source or note line, even if it only says the data is illustrative. *Why:* a number without a source is the first thing a sceptical reader questions. *(Checked.)*
+- **Sources, notes, and qualifiers** wherever a claim or figure needs one. Every slide with a chart or a table of numbers carries a source or note line, even if it only says the data is illustrative. *Why:* a number without a source is the first thing a sceptical reader questions. *(Checked.)* Use only sources named in the material. **If the material gives none, write "Source: [to be confirmed]" and say so in your reply**; never write a plausible-sounding source ("Team analysis", "Industry data", "Company filings") to satisfy this rule. *Why:* an invented source is worse than a missing one: it looks checked when it isn't.
 - **Make the slide's job clear:** it should be obvious whether the audience is meant to absorb, discuss, decide, brainstorm, or ask questions.
 - **Don't invent.** Use only facts, data, sources, and conclusions supported by the materials. Don't add false precision, and don't let commentary claim more than the evidence shows (e.g., a causal claim from purely descriptive data).
 - **Don't add design machinery.** Every visual device must mean something. Numbering, colour coding, badges, borders, background fills, and extra text weights all imply structure; if the structure isn't real (e.g., ranking markers implying a difference between items that are equal), remove them.
@@ -154,13 +161,16 @@ The underlying goal: a deck that looks polished and calm, where nothing moves, c
 ## 8. Tables
 
 - Use a table only when the reader needs exact lookup; otherwise summarize and visualize the key comparison. The key message should be graspable without searching the table.
+- **A chart or a table, not both,** for the same numbers (§1, "take things off"). If the evidence is a comparison, it's usually a chart.
 - Sort by the column most relevant to the slide's message.
 - Declutter: minimal shading, gridlines, and title differentiation. Fields in a table behave like a true table (aligned columns, consistent row heights).
 - A key for a table (a rating scale, symbols) follows the chart-key rule: small, italic, grey, just above the top-right corner; better still, label the highlighted item directly (`charts.md` §5b).
 
 ## 9. Numbers and wording
 
-- **Sensible rounding.** In prose, prefer natural quantities ("about 19,000 vehicles per day"). Use K/M/B only where the chart context makes them obvious; in charts, state the scale in the axis title (`charts.md`).
+- **Sensible rounding.** In prose, prefer natural quantities ("about 19,000 vehicles per day"). Use K/M/B only where the chart context makes them obvious; in charts, state the scale in the axis title (`charts.md`). **State a scale once:** "Thousands of people" in the title *and* "93K" on every label makes readers wonder whether it means thousands of thousands. No decimals on values of 10 or more ("$31K" or "31", never "$31.0K").
+- **Sanity-check units before using them.** If a unit makes a figure implausible (retail rent of "$30 per sq ft per month", a wage of "$16.50 per day"), or two slides give the same measure in different units, don't silently pick one: keep the source's figures, and flag the mismatch in your reply (and in the speaker notes if the deck is going to someone else). *Why:* a wrong unit undermines every number near it, and the user is the one who can check the source.
+- **Label figures you derived.** A number you calculated from the data (income × share, a % gap, a growth rate) says how it was worked out, in a "Note:" line, so it isn't mistaken for a sourced figure.
 - **Durations in natural units:** "2 years, 8 months" or "2 yrs, 8 mo", never "2.7 years"; only halves may be fractional, written "1½ years".
 - **Every derived number is correct and unambiguous.** Sums, shares, growth rates, durations, and totals are re-computed in code (`qa.md`, accuracy pass); a duration label states the range it covers ("10:45–11:25, 40 minutes"), and a highlight box covers exactly the items its label counts. *(Partly checked.)*
 - **Mark the status of numbers:** estimates ("~", "30+", footnoted), illustrative examples ("Illustrative" banner, "[DUMMY DATA]"), and work in progress ("WIP"). Put assumptions on an assumptions slide when figures depend on them.

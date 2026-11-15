@@ -912,7 +912,7 @@ def check_data_source(deck, idx, infos, roles, out):
             if sum(1 for t in cells if re.search(r"\d", t)) >= 4:
                 data.append(i)
     if data:
-        out.append(Finding("warning", "source", f"Data on this slide ('{data[0].name}') but no source or note line: say where the numbers come from, or mark them illustrative", idx))
+        out.append(Finding("warning", "source", f"Data on this slide ('{data[0].name}') but no source or note line: say where the numbers come from (only a source named in the material; otherwise 'Source: [to be confirmed]'), or mark them illustrative", idx))
 
 
 def check_slide(deck, idx, slide, out, deck_colors, n_slides):

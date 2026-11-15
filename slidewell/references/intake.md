@@ -38,6 +38,9 @@ If the user says "just go" or won't be around to answer, take the most reasonabl
 - **Build straight through**: fastest. I state my assumptions at the top and build the whole deck. Best for drafts, internal decks, or when you're away. Expect more changes afterwards, and if the story is off, a bigger rebuild.
 - *e.g.:* "Show me the storyline and the look first." or "Just build it, I'll react to the draft."
 
+**5b. One version or options?** For the slides that carry the key message (the opening, the executive summary, a recommendation) and for any slide being redesigned: one recommended design, or three structurally different alternatives to choose from (SKILL.md mode C)? Recommend options for those slides; one version for the rest.
+- *e.g.:* "One deck, but give me three options for the executive summary." or "Just one version of everything."
+
 ## Round 2: details (ask only what Round 1 leaves open)
 
 **6. Building blocks.** Show the section menu below, pre-ticked for the deck type, and ask the user to untick or add.
@@ -57,11 +60,9 @@ If the user says "just go" or won't be around to answer, take the most reasonabl
 **9. Navigation style and position?** How should slides show where the audience is: a short topic label above the headline (default), a tracker of the agenda or sections, a mini version of the framework with the current part highlighted, or a rail down the left? And where: top-left above the headline, top-centre, or bottom-centre above the page edge (with the notes above it)? Whatever is tracked must be introduced first (agenda, contents, or framework slide) and appear on every slide it covers.
 - *e.g.:* "Topic label above the headline is fine." or "Track the agenda along the bottom centre, small." or "Use the six-question diagram as a mini tracker in the corner."
 
-**8b. Corners?** Square or slightly rounded boxes? (Default: square, or slightly rounded if the brand has circular shapes. One style for the whole deck.)
+**9b. Corners?** Square or slightly rounded boxes? (Default: square, or slightly rounded if the brand has circular shapes. One style for the whole deck.)
 - *e.g.:* "Square." or "Rounded, our logo is a circle."
 
-**10. One version or options?** (For a key slide or the opening: one recommended design, or three structurally different alternatives to choose from.)
-- *e.g.:* "One deck, but give me three options for the executive summary."
 
 ## Section menu
 

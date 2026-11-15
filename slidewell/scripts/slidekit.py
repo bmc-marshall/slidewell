@@ -26,10 +26,13 @@ What it handles for you (see references/finishing-standard.md for the reasons):
 - chart titles aligned with the axis (chart_title); takeaways beside a chart spread down the plot (side_points)
 - imagery: photos cropped to fill or placeholder frames (photo), legibility overlays (overlay), icons (icon),
   one deck-wide transition (transition)
-- chart helpers: transparent chart areas, fixed plot layout, axis styling, line labels centred on lines
+- chart helpers: transparent chart areas, fixed plot layout, axis styling, line labels centred on lines,
+  column + line on two visible axes (combo_chart), keys with text centred on each swatch (legend)
+- adding slides to an existing deck: fill(..., like=existing_headline) copies that headline's formatting
 Fonts are measured with the real metrics of the installed font (sw_fonts.py: fontconfig, or the OS font folders), so use fonts that are
 installed here or have metric-compatible stand-ins (Arial, Times New Roman, Cambria...).
 """
+import copy
 import sys
 import subprocess
 from functools import lru_cache
@@ -388,14 +391,21 @@ class Kit:
                 return ph
         return None
 
-    def fill(self, slide, kind, text, bullets=None):
+    def fill(self, slide, kind, text, bullets=None, like=None):
         """Put text in a template placeholder, keeping the template's own font, size, colour and bullets.
         text: a string ("\v" for a line break), or a list of strings for one paragraph each.
-        bullets: list of (text, level) pairs for the body placeholder."""
+        bullets: list of (text, level) pairs for the body placeholder.
+        like: an existing shape (e.g. another slide's headline) whose first run's formatting every new run copies.
+        Use it when adding slides to an existing deck: its slides often set the headline size on the text itself,
+        while the layout's placeholder inherits a much larger default."""
         ph = self.placeholder(slide, kind)
         if ph is None:
             raise KeyError(f"This layout has no {kind} placeholder")
         tf = ph.text_frame
+        rpr = None
+        if like is not None:
+            runs = [r for p_ in like.text_frame.paragraphs for r in p_.runs]
+            rpr = runs[0]._r.find(f"{{{A}}}rPr") if runs else None
         items = bullets or ([(x, 0) for x in text] if isinstance(text, list) else [(text, 0)])
         for k, (t_, lvl) in enumerate(items):
             p = tf.paragraphs[0] if k == 0 else tf.add_paragraph()
@@ -403,7 +413,12 @@ class Kit:
             for j, piece in enumerate(t_.split("\v")):
                 if j:
                     p.add_line_break()
-                p.add_run().text = piece
+                r = p.add_run(); r.text = piece
+                if rpr is not None:
+                    old = r._r.find(f"{{{A}}}rPr")
+                    if old is not None:
+                        r._r.remove(old)
+                    r._r.insert(0, copy.deepcopy(rpr))
         return ph
 
     def move(self, shape, x=None, y=None, w=None, h=None):
@@ -970,6 +985,103 @@ class Kit:
                 spPr.remove(c_)
             etree.SubElement(spPr, f"{{{A}}}noFill")
             ln = etree.SubElement(spPr, f"{{{A}}}ln"); etree.SubElement(ln, f"{{{A}}}noFill")
+
+    def combo_chart(self, slide, x, y, w, h, categories, bars, line, bar_axis_title, line_axis_title,
+                    bar_max=None, line_min=None, line_max=None, bar_fmt="#,##0", line_fmt="0%", pt=14,
+                    bar_color=None, line_color=None):
+        """Columns on the left axis plus one line on a right-hand axis (two measures that move together over time).
+        bars: list of (name, values); line: (name, values). Both value axes stay visible, each titled with its unit
+        and coloured to match its series, so the reader can tell which scale belongs to which mark.
+        Scale the two axes so the line runs above the columns (line_min below zero is fine; label it) and the
+        marks never cross. Returns the graphic frame; add data labels on the plots as for any chart.
+        Why the XML: python-pptx has no combo charts. The line series moves into a lineChart bound to a second
+        category/value axis pair. Never delete that secondary axis: LibreOffice then plots the line on the
+        primary scale, and the checker rejects hidden value axes anyway."""
+        from pptx.chart.axis import ValueAxis
+        from pptx.enum.chart import XL_CHART_TYPE, XL_TICK_MARK
+        from pptx.oxml import parse_xml
+        cd = CategoryChartData(); cd.categories = list(categories)
+        for name, vals in bars:
+            cd.add_series(name, list(vals))
+        cd.add_series(line[0], list(line[1]))
+        gf = slide.shapes.add_chart(XL_CHART_TYPE.COLUMN_CLUSTERED, Inches(x), Inches(y), Inches(w), Inches(h), cd)
+        ch = gf.chart; self.style_chart(ch, pt)
+        va = ch.value_axis; va.minimum_scale = 0
+        if bar_max is not None:
+            va.maximum_scale = bar_max
+        va.has_major_gridlines = False; va.major_tick_mark = XL_TICK_MARK.OUTSIDE
+        va.tick_labels.number_format = bar_fmt; va.tick_labels.number_format_is_linked = False
+        self.axis(va, bar_axis_title, pt)
+        self.axis(ch.category_axis, None, pt); ch.category_axis.major_tick_mark = XL_TICK_MARK.NONE
+        plot = ch._chartSpace.find(f".//{{{C}}}plotArea")
+        bar = plot.find(f"{{{C}}}barChart")
+        ser = bar.findall(f"{{{C}}}ser")[-1]; bar.remove(ser)
+        inv = ser.find(f"{{{C}}}invertIfNegative")
+        if inv is not None:
+            ser.remove(inv)
+        etree.SubElement(ser, f"{{{C}}}smooth").set("val", "0")
+        lc = etree.Element(f"{{{C}}}lineChart")
+        etree.SubElement(lc, f"{{{C}}}grouping").set("val", "standard")
+        etree.SubElement(lc, f"{{{C}}}varyColors").set("val", "0")
+        lc.append(ser)
+        etree.SubElement(lc, f"{{{C}}}marker").set("val", "1")
+        for v in ("50000001", "50000002"):
+            etree.SubElement(lc, f"{{{C}}}axId").set("val", v)
+        bar.addnext(parse_xml(etree.tostring(lc)))   # parse_xml gives python-pptx's own element classes
+        scaling = '<c:orientation val="minMax"/>'
+        if line_max is not None:
+            scaling += f'<c:max val="{line_max}"/>'
+        if line_min is not None:
+            scaling += f'<c:min val="{line_min}"/>'
+        cat2 = parse_xml(
+            f'<c:catAx xmlns:c="{C}"><c:axId val="50000001"/><c:scaling><c:orientation val="minMax"/></c:scaling>'
+            '<c:delete val="1"/><c:axPos val="b"/><c:majorTickMark val="none"/><c:minorTickMark val="none"/>'
+            '<c:tickLblPos val="nextTo"/><c:crossAx val="50000002"/><c:crosses val="autoZero"/><c:auto val="1"/>'
+            '<c:lblAlgn val="ctr"/><c:lblOffset val="100"/><c:noMultiLvlLbl val="0"/></c:catAx>')
+        val2 = parse_xml(
+            f'<c:valAx xmlns:c="{C}"><c:axId val="50000002"/><c:scaling>{scaling}</c:scaling>'
+            f'<c:delete val="0"/><c:axPos val="r"/><c:numFmt formatCode="{line_fmt}" sourceLinked="0"/>'
+            '<c:majorTickMark val="out"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/>'
+            '<c:crossAx val="50000001"/><c:crosses val="max"/><c:crossBetween val="between"/></c:valAx>')
+        last = plot.findall(f"{{{C}}}valAx")[-1]
+        last.addnext(cat2); cat2.addnext(val2)
+        self.axis(ValueAxis(val2), line_axis_title, pt)
+        bar_color = bar_color or self.T["grey"]; line_color = line_color or self.T["main"]
+        for s_ in ch.plots[0].series:
+            s_.format.fill.solid(); s_.format.fill.fore_color.rgb = bar_color
+        ch.plots[0].gap_width = 60
+        ls = ch.plots[1].series[0]
+        ls.format.line.color.rgb = line_color; ls.format.line.width = Pt(2.25); ls.smooth = False
+        ls.marker.style = None
+        m = ls._element.get_or_add_marker(); m.get_or_add_symbol().set("val", "none")
+        for ax_el, col in ((va._element, bar_color), (val2, line_color)):   # colour-code each axis title to its series
+            for r in ax_el.findall(f".//{{{C}}}title//{{{A}}}r"):
+                rpr = r.find(f"{{{A}}}rPr")
+                for f in rpr.findall(f"{{{A}}}solidFill"):
+                    rpr.remove(f)
+                sf = etree.Element(f"{{{A}}}solidFill"); etree.SubElement(sf, f"{{{A}}}srgbClr").set("val", str(col))
+                rpr.insert(0, sf)
+        return gf
+
+    def legend(self, slide, x, entries, y=None, pt=14, swatch=0.16, row_h=None, w=2.2, line=False):
+        """A key built from shapes: each entry's swatch and text share one centre line (text anchored middle).
+        entries: list of (label, colour) stacked down from y, or (label, colour, centre_y) to place each entry
+        level with its segment (stacked charts: same order as the stack, top entry = top segment).
+        line=True draws a short line instead of a square (for line series). Returns the created shapes."""
+        row_h = row_h or (pt * 1.2 / 72 + 0.12)
+        out = []
+        for k, e in enumerate(entries):
+            label, col = e[0], e[1]
+            cy = e[2] if len(e) > 2 else y + row_h * (k + 0.5)
+            if line:
+                out.append(self.line(slide, x, cy, x + swatch * 1.6, cy, col, w=2.25))
+                tx = x + swatch * 1.6 + 0.1
+            else:
+                out.append(self.shape(slide, MSO_SHAPE.RECTANGLE, x, cy - swatch / 2, swatch, swatch, col))
+                tx = x + swatch + 0.1
+            h = pt * 1.2 / 72 + 0.06
+            out.append(self.text(slide, tx, cy - h / 2, w, h, label, pt, anchor=MSO_ANCHOR.MIDDLE, smart=False))
+        return out
 
     def line_label(self, slide, x, y_line, s, pt=16, color=None, bold=True, w=2.0):
         """Label at the end of a line: box vertically centred on the line, text vertically centred in the box."""

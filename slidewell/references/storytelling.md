@@ -145,6 +145,14 @@ Every content slide has a headline that:
 
 A synthesis headline fails if it isn't supported by the content below it (wrong), draws on only some of the content (too narrow), or reaches beyond it (too wide).
 
+**Read the emphasis already in the material.** When you write a headline for a slide someone else drafted, or for data they prepared, look first at what they've marked: highlighted rows or cells, circled points, bold figures, a sorted column, an annotation. That emphasis is the author telling you what the slide is for, and the headline should explain it. Ask: why would someone highlight *these* items and not the others?
+
+*Example.* A competitor table lists nine restaurants by category (national quick-serve, national fast-casual, local) with their review scores. The draft highlights the two best-rated quick-serve chains and the two best-rated local restaurants.
+- *Misses the point:* "The national fast-casual chains in town rate poorly." True, but it's about the rows nobody highlighted.
+- *Gets it:* "Diners rate quick-serve chains and local restaurants highly, but national fast-casual is a gap: competition will come from quick-serve and local." The highlights show where the strong competition is; the gap is what's left.
+
+If the emphasis seems to contradict the data, or you can't tell why something is marked, ask rather than guess.
+
 Section dividers, agenda trackers, and exercise slides may use shorter labels rather than full message headlines, because their job is navigation or instruction rather than argument.
 
 ## 7. Planning the deck

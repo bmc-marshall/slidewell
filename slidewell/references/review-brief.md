@@ -15,9 +15,13 @@ You are reviewing a deck someone else built. Your job is to find what's wrong, n
 5. **Alignment.** Are parallel items exactly aligned? Are labels centred on the bars or shapes they label? Are side points level with the plotted data? Are markers between items exactly halfway?
 6. **Colour roles.** Is the topic label distinct from the headline? Is each fill paired with the same text colour as elsewhere in the deck? Is the accent used only for the one thing to notice?
 7. **Padding.** Is text pressed against the edge of its box (a price touching the bottom of its card, a label touching a border)?
-8. **Collisions.** Does anything overlap anything else (labels over placeholders or bars, text over a photo without an overlay)?
+8. **Collisions.** Does anything overlap anything else (labels over placeholders, bars or each other, text over a photo without an overlay)? Any overlap is *must fix*. So is a chart that looks broken: bars floating above the axis, a line on the wrong scale.
 9. **Accuracy.** Do the numbers add up? Does every duration label state its range? Does commentary match what the chart shows?
-10. **Generic look.** Does this deck have its own identity: a palette and motif drawn from its subject, used in at least three roles? Or could it be any deck? Is any slide mostly a grey placeholder with little else?
+10. **What can come off?** Is anything on the slide repeating the headline (a "so what" strap), showing the same numbers twice (a chart *and* a table), out of scope for the decision, or there for a different audience (a CEO quote in an internal deck)? Name each element that could go (finishing-standard §1, "take things off"). *Should fix.*
+11. **Supplied text kept?** Compare every bullet, label, and quote with the storyboard or brief you were given. Any wording that changed is *must fix*, unless the builder flagged it as a suggestion.
+12. **Chart titles and panel headers describe; only the headline concludes.** A chart title that states a finding is *should fix* (charts.md §5).
+13. **Matches the rest of the deck?** New slides use the same text sizes, headline formatting, and box styles as comparable existing slides.
+14. **Generic look.** Does this deck have its own identity: a palette and motif drawn from its subject, used in at least three roles? Or could it be any deck? Is any slide mostly a grey placeholder with little else?
 
 ## Then, for each slide
 

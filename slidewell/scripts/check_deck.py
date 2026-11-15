@@ -871,7 +871,71 @@ def check_charts(deck, idx, infos, out):
             if m.get("val") != "none":
                 out.append(Finding("warning", "charts", f"Line markers on every point in '{i.name}': use a dot only on labelled points", idx))
                 break
+        check_label_formats(cs, i.name, idx, out)
+    tables = [i for i in infos if i.is_table and _table_has_numbers(i.sh)]
+    charts = [i for i in infos if i.is_chart]
+    if tables and charts:
+        out.append(Finding("warning", "redundancy",
+                           f"Chart '{charts[0].name}' and table '{tables[0].name}' of numbers on one slide: show the numbers once, "
+                           "as a chart or a table, unless they show different data (finishing-standard §1)", idx))
     return has_chart_or_table
+
+
+def _table_has_numbers(sh):
+    import re
+    cells = [c.text for r in sh.table.rows for c in r.cells]
+    return sum(bool(re.search(r"\d", t)) for t in cells) >= 3
+
+
+def _scale_and_decimals(code):
+    """From an Excel number format: the divisor its trailing commas apply, and how many decimals it shows."""
+    import re
+    body = re.sub(r'"[^"]*"|\\.|\[[^\]]*\]', "", code.split(";")[0])
+    m = re.search(r"[0#]([.,0#]*)", body)
+    if not m:
+        return 1, 0
+    num = m.group(0)
+    trailing = len(num) - len(num.rstrip(","))
+    dec = len(num.split(".")[1].rstrip(",")) if "." in num else 0
+    return 1000 ** trailing, dec
+
+
+def check_label_formats(cs, name, idx, out):
+    """Data labels: no K/M suffix (state the scale in the axis title) and no decimals on values of 10 or more.
+    A series' own label format wins; otherwise the format set for its whole chart group applies."""
+    plot = cs.find(".//c:plotArea", NS)
+    groups = [g for g in plot if etree.QName(g).localname.endswith("Chart")] if plot is not None else []
+    seen = set()
+    for g in groups:
+        g_fmt, g_show = g.find("c:dLbls/c:numFmt", NS), g.find("c:dLbls/c:showVal", NS)
+        for ser in g.findall("c:ser", NS):
+            fmt = ser.find("c:dLbls/c:numFmt", NS)
+            show = ser.find("c:dLbls/c:showVal", NS)
+            fmt = fmt if fmt is not None else g_fmt
+            show = show if show is not None else g_show
+            if fmt is None or show is None or show.get("val") not in ("1", "true"):
+                continue
+            code = fmt.get("formatCode", "")
+            vals = []
+            for v in ser.findall("c:val//c:pt/c:v", NS):
+                try:
+                    vals.append(abs(float(v.text)))
+                except (TypeError, ValueError):
+                    pass
+            if not vals:
+                continue
+            div, dec = _scale_and_decimals(code)
+            biggest = max(vals) * 100 if "%" in code else max(vals) / div
+            if any(sfx in code for sfx in ('"K"', '"k"', '"M"', '"m"', '"B"', '"bn"')) and ("suffix", code) not in seen:
+                seen.add(("suffix", code))
+                out.append(Finding("warning", "number-format",
+                                   f"Data labels in '{name}' carry a scale suffix ({code}): state the scale once in the axis title "
+                                   "and show plain numbers (charts.md §5, Numbers)", idx))
+            if dec and biggest >= 10 and ("dec", code) not in seen:   # percentages may keep 1 dp for growth rates: warn only
+                seen.add(("dec", code))
+                out.append(Finding("warning" if "%" in code else "error", "number-format",
+                                   f"Data labels in '{name}' show {dec} decimal place(s) on values of 10 or more ({code}): "
+                                   "no decimals at 10 and above (charts.md §5, Numbers)", idx))
 
 
 ADEC_URI = "{C183D7F6-B498-43B3-948B-1728B52AA6E4}"
@@ -912,7 +976,7 @@ def check_data_source(deck, idx, infos, roles, out):
             if sum(1 for t in cells if re.search(r"\d", t)) >= 4:
                 data.append(i)
     if data:
-        out.append(Finding("warning", "source", f"Data on this slide ('{data[0].name}') but no source or note line: say where the numbers come from, or mark them illustrative", idx))
+        out.append(Finding("warning", "source", f"Data on this slide ('{data[0].name}') but no source or note line: say where the numbers come from (only a source named in the material; otherwise 'Source: [to be confirmed]'), or mark them illustrative", idx))
 
 
 def check_slide(deck, idx, slide, out, deck_colors, n_slides):

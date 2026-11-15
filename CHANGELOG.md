@@ -4,7 +4,7 @@
 
 From a real assignment: rebuilding two slides and adding three to an existing deck.
 
-- **Revise mode asks first.** Before redesigning or adding slides to an existing deck, a short intake: audience and use, one version or three options, and how hands-on to be. The "options?" question moves into intake Round 1, so the short route asks it too.
+- **Revise mode asks first.** Before redesigning or adding slides to an existing deck, a short intake: audience and use, one version or three options, whether to keep the existing format (if not, proposed format changes are signed off and applied to the existing slides too), and how hands-on to be. The "options?" question moves into intake Round 1, so the short route asks it too.
 - **Take things off.** After vertical logic, a deliberate pass to remove what supports the headline but isn't needed: a strap repeating the headline, the same numbers as both chart and table, comparisons outside the decision's scope, context aimed at a different audience.
 - **Supplied text is used word for word** (storyboard bullets, quotes, labels); suggested edits go in the reply.
 - **New slides match the deck:** the deck's own text sizes and headline formatting where they meet the standard; containers sized to their content; replacement versions go on the template's placeholder slides. `kit.fill(..., like=headline)` copies an existing headline's formatting.

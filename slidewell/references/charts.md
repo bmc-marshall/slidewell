@@ -53,6 +53,7 @@ Adapted from A. Abela's *Chart Suggestions: A Thought-Starter* (2006) and Flouri
 - Many periods → **line** chart.
 - Two points in time, several items → **slope** chart.
 - Projections with uncertainty → line with a **fan** (shaded range) or **scenario lines** (see §5 forecasts).
+- Two related measures with different units (spending in $ and a share in %) whose relationship is the point → **column + line on two axes** (`kit.combo_chart`). Use it sparingly: two scales let you make any two series look related. Only when the headline is about both measures together; otherwise show the one the headline is about, or convert both to one unit (an index, or the derived figure, e.g. spending × share).
 - Cyclical data (e.g., months of the year) → line chart by cycle; radar charts should rarely be needed.
 
 **Composition (parts of a whole)**
@@ -93,6 +94,7 @@ Prefer native, editable charts (python-pptx `chart_data` + `add_chart`):
 |---|---|
 | Bar, column, clustered, stacked, 100% stacked | Native (`BAR_CLUSTERED`, `COLUMN_STACKED`, `BAR_STACKED_100`, …) |
 | Line, slope, scenario lines | Native `LINE`; slope = two categories |
+| Column + line on two axes | `kit.combo_chart()`: native columns plus a line bound to a visible right-hand axis. Both axes keep their tick labels and a units title, each coloured to match its series. Never delete the secondary axis: LibreOffice then plots the line on the primary scale |
 | Scatter, bubble | Native `XY_SCATTER`, `BUBBLE` |
 | Waterfall | Native **stacked column** with an invisible (no-fill) base series; or shapes |
 | Histogram | Native column with gap width 0–5% |
@@ -107,7 +109,7 @@ When you build a chart from shapes, compute positions from one scale function so
 ## 5. Conventions
 
 **Titles and units**
-- Chart title is **descriptive**: what, scope, period ("Daily traffic by corridor, 2025"). The slide headline carries the message. Chart titles ≥16 pt. Labels that name the data (category labels, series labels) ≥14 pt, ideally 16; a value axis that only gives the scale (ticks and a units title like "People") can be a step smaller (12 pt) so the data labels lead.
+- Chart title is **descriptive**: what, scope, period ("Daily traffic by corridor, 2025"). The slide headline carries the message. A chart title never states a finding: "Average annual daily traffic, 2024" or "Cost vs. national average, %", not "Costs run 7–12% above average" or "Traffic: corridors carry 8–19K vehicles a day". The same goes for panel headers beside a chart ("Population by quarter", not "Since the 2021 low…"). *Why:* a second message competes with the headline, and a reader can't tell which one is the point. Chart titles ≥16 pt. Labels that name the data (category labels, series labels) ≥14 pt, ideally 16; a value axis that only gives the scale (ticks and a units title like "People") can be a step smaller (12 pt) so the data labels lead.
 - **Chart title position:** left-aligned with the axis tick labels (the visible edge of the chart), not with the rotated axis title; same position on every chart slide (finishing-standard §5).
 - The **unit goes in the value-axis title** ("Vehicles per day", "Revenue ($M)"), not in the chart title.
 - Leave clear space between the title and the plot.
@@ -122,7 +124,8 @@ When you build a chart from shapes, compute positions from one scale function so
 
 **Identifying series**
 - Line charts (lines running broadly horizontally) → **direct labels at the right end of each line**, colored to match.
-- Stacked bars/columns → **legend to the right of the rightmost bar, each entry vertically aligned with its segment**.
+- Stacked bars/columns → **legend to the right of the rightmost bar, each entry vertically aligned with its segment**: a vertical list in the same order as the stack (top entry = top segment), never a horizontal row above a vertical chart.
+- **Legend text is centred on its key.** The swatch (or line) and its text share one centre line: anchor the text in the middle of its box and centre the box on the swatch. *Why:* text sitting high or low beside its key looks misaligned even when the boxes line up.
 - Everything else → direct labels; a legend to the right of the plot only if direct labels won't fit.
 - Keys for tables and diagrams (rating scales, symbols): small (10–12 pt), italic, grey, just above the top-right corner, right-aligned. Better still, label the highlighted thing directly (§5b).
 - Data labels inside bars use the centre position. Forecast dividers sit on the last actual value, where dashed lines begin (§5b).
@@ -133,6 +136,8 @@ When you build a chart from shapes, compute positions from one scale function so
 **Data labels**
 - Regular bars/columns → **outside end**.
 - Stacked bars/columns → **inside each segment** (contrasting text; omit labels on segments too small to hold them and note it).
+- **Totals go above each stacked bar or column, never below the axis.** Put each total just above its column, like an outside-end label. A row of totals under the category labels reads like a table footer. (The one exception is a chart sitting directly above a table of related metrics, where the totals are one of its rows.)
+- **If the headline is about the totals, the segments may not be needed.** Use plain columns with one label each, or keep the segments for colour but drop their labels and keep only the totals.
 - High-level charts → label only the key values (e.g., first, last, highlighted).
 - Line charts → label the latest value (and other values the headline mentions) with a small dot.
 
@@ -166,7 +171,7 @@ When you build a chart from shapes, compute positions from one scale function so
 - Shortest clear form: full years (2025); months as "Jan" with the year shown at the first month and at year changes; fiscal years "FY25".
 
 **Marks**
-- Bars wider than the gaps between them (gap ≈ 50–80% of bar width), consistent across the deck. Bars never touch the axis baseline.
+- Bars wider than the gaps between them (gap ≈ 50–80% of bar width), consistent across the deck. **Bars start exactly on the axis baseline**, with no gap underneath, and nothing is drawn over the axis line. A bar floating above the axis looks like a chart error.
 - Lines about 2 pt, no markers except a dot on labeled points; the focal line slightly thicker.
 
 **Multiple charts**
@@ -185,7 +190,7 @@ When you build a chart from shapes, compute positions from one scale function so
 - **Label space:** reserve room for category, tick, and data labels. Labels never overlap bars, axes, gridlines, or each other, and never intrude into the plot area. If they spill, reduce label size (≥10 pt), wrap deliberately, widen the label area, or abbreviate clearly.
 - **Title clearance:** clear space between the chart title/subtitle and the plot, so the title doesn't crowd the first bar, gridline, label, or axis (about 0.25–0.35 in; finishing-standard §5).
 - **Axis proximity:** tick labels and axis titles close enough to their axis that the relationship is obvious, without touching.
-- **Bars** never touch or overlap the axis baseline.
+- **Bars** sit exactly on the axis baseline: no gap beneath them, and nothing overlapping the axis line.
 - **Native first:** build charts as native, editable PowerPoint charts wherever practical. If a visual can't reasonably be rebuilt, place it as an image and keep its title, annotations, and source native.
 
 **Finishing details** *(from the author's reviews of built decks)*

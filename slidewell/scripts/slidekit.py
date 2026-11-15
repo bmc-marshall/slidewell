@@ -1061,6 +1061,26 @@ class Kit:
                 rpr.insert(0, sf)
         return gf
 
+    def legend(self, slide, x, entries, y=None, pt=14, swatch=0.16, row_h=None, w=2.2, line=False):
+        """A key built from shapes: each entry's swatch and text share one centre line (text anchored middle).
+        entries: list of (label, colour) stacked down from y, or (label, colour, centre_y) to place each entry
+        level with its segment (stacked charts: same order as the stack, top entry = top segment).
+        line=True draws a short line instead of a square (for line series). Returns the created shapes."""
+        row_h = row_h or (pt * 1.2 / 72 + 0.12)
+        out = []
+        for k, e in enumerate(entries):
+            label, col = e[0], e[1]
+            cy = e[2] if len(e) > 2 else y + row_h * (k + 0.5)
+            if line:
+                out.append(self.line(slide, x, cy, x + swatch * 1.6, cy, col, w=2.25))
+                tx = x + swatch * 1.6 + 0.1
+            else:
+                out.append(self.shape(slide, MSO_SHAPE.RECTANGLE, x, cy - swatch / 2, swatch, swatch, col))
+                tx = x + swatch + 0.1
+            h = pt * 1.2 / 72 + 0.06
+            out.append(self.text(slide, tx, cy - h / 2, w, h, label, pt, anchor=MSO_ANCHOR.MIDDLE, smart=False))
+        return out
+
     def line_label(self, slide, x, y_line, s, pt=16, color=None, bold=True, w=2.0):
         """Label at the end of a line: box vertically centred on the line, text vertically centred in the box."""
         h = pt * 1.2 / 72 + 0.06

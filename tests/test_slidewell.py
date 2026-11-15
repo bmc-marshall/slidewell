@@ -170,3 +170,15 @@ def test_fill_copies_headline_formatting(tmp_path):
     t2 = kit.fill(s2, "title", "A new headline\vover two lines", like=t1)
     runs = [r for p_ in t2.text_frame.paragraphs for r in p_.runs]
     assert len(runs) == 2 and all(r.font.size == Pt(28) and r.font.bold for r in runs)
+
+
+def test_legend_text_centred_on_swatch():
+    """kit.legend: each swatch and its text box share a centre line, and the text is anchored middle."""
+    from slidekit import Kit
+    from pptx.enum.text import MSO_ANCHOR
+    kit = Kit()
+    s = kit.new_slide()
+    shapes = kit.legend(s, 9.0, [("Tourists", kit.T["main"], 2.4), ("Students", kit.T["grey"], 3.6)])
+    for sw, tx in zip(shapes[0::2], shapes[1::2]):
+        assert abs((sw.top + sw.height / 2) - (tx.top + tx.height / 2)) < 2000   # EMU; well under a point
+        assert tx.text_frame.vertical_anchor == MSO_ANCHOR.MIDDLE

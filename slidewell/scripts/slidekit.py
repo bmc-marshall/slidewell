@@ -30,6 +30,7 @@ What it handles for you (see references/finishing-standard.md for the reasons):
 Fonts are measured with the real metrics of the installed font (sw_fonts.py: fontconfig, or the OS font folders), so use fonts that are
 installed here or have metric-compatible stand-ins (Arial, Times New Roman, Cambria...).
 """
+import copy
 import sys
 import subprocess
 from functools import lru_cache
@@ -388,14 +389,21 @@ class Kit:
                 return ph
         return None
 
-    def fill(self, slide, kind, text, bullets=None):
+    def fill(self, slide, kind, text, bullets=None, like=None):
         """Put text in a template placeholder, keeping the template's own font, size, colour and bullets.
         text: a string ("\v" for a line break), or a list of strings for one paragraph each.
-        bullets: list of (text, level) pairs for the body placeholder."""
+        bullets: list of (text, level) pairs for the body placeholder.
+        like: an existing shape (e.g. another slide's headline) whose first run's formatting every new run copies.
+        Use it when adding slides to an existing deck: its slides often set the headline size on the text itself,
+        while the layout's placeholder inherits a much larger default."""
         ph = self.placeholder(slide, kind)
         if ph is None:
             raise KeyError(f"This layout has no {kind} placeholder")
         tf = ph.text_frame
+        rpr = None
+        if like is not None:
+            runs = [r for p_ in like.text_frame.paragraphs for r in p_.runs]
+            rpr = runs[0]._r.find(f"{{{A}}}rPr") if runs else None
         items = bullets or ([(x, 0) for x in text] if isinstance(text, list) else [(text, 0)])
         for k, (t_, lvl) in enumerate(items):
             p = tf.paragraphs[0] if k == 0 else tf.add_paragraph()
@@ -403,7 +411,12 @@ class Kit:
             for j, piece in enumerate(t_.split("\v")):
                 if j:
                     p.add_line_break()
-                p.add_run().text = piece
+                r = p.add_run(); r.text = piece
+                if rpr is not None:
+                    old = r._r.find(f"{{{A}}}rPr")
+                    if old is not None:
+                        r._r.remove(old)
+                    r._r.insert(0, copy.deepcopy(rpr))
         return ph
 
     def move(self, shape, x=None, y=None, w=None, h=None):

@@ -43,7 +43,7 @@ Some hosts load only this SKILL.md, without the folders beside it. **Before step
 | The user wants… | Mode |
 |---|---|
 | A new deck (findings, recommendation, options appraisal, update, workshop, or a mix) | **A. New deck** |
-| Changes to existing slides | **B. Revise** |
+| Changes to existing slides, or new slides added to an existing deck | **B. Revise** |
 | Several alternative versions of a slide | **C. Options** |
 | A post-workshop version with the session's input | **D. Share version** |
 | A styled, empty template of the slides they'll need, to fill in themselves | **E. Template** |
@@ -115,6 +115,7 @@ Build native, editable .pptx with python-pptx (`pip install python-pptx` if miss
 
 - Choose each slide's pattern from `references/layout-patterns.md` by the job the slide does. Respect the content-density benchmark (§H).
 - Write headlines exactly as approved; if building reveals that a headline can't be supported, flag it rather than quietly changing it.
+- **Use text the user supplied word for word.** Bullets, labels, quotes, and headlines from a storyboard, brief, or spreadsheet go on the slide exactly as given (fixing only obvious typos, and saying so). If you think a supplied line should change (it's too long, unsupported, or would read better with a number), keep the original on the slide and suggest the edit in your reply. *Why:* the user, or their boss, has already agreed that wording; a silent rewrite breaks that agreement and is hard to spot.
 - Draw every recurring element (breadcrumb, headline, source, page number, logo) from the theme spec, using the same function every time.
 - Build parallel elements (columns, cards, pillars) in a loop from one definition, so they cannot drift apart.
 - Numbers: for every slide with two or more values being compared, use a chart, not text (`references/charts.md` §1). Choose and build it per `references/charts.md`; annotations stay native and editable.
@@ -150,9 +151,17 @@ A missing or thin QA report tells the user QA didn't really happen, so never ski
 
 Revisions are where AI-built decks usually get worse. Work like this:
 
+0. **Ask before you build, briefly.** Unless the user has already answered these, ask in one message, with your best guess as the proposed answer so they can just confirm:
+   - **Audience and use:** who will see it, and will it be presented live or read? (This decides what belongs on a slide: a quote that persuades an external audience is clutter for an internal one.)
+   - **One version or options?** For each slide you're redesigning or adding: "one recommended version, or three genuinely different options to choose from (mode C)?" Recommend options for a slide that carries a key message or that the user has said is important.
+   - **How hands-on?** Review a mock-up of the first new slide before the rest, or build straight through (the Checkpoints table).
+   Small fixes (a typo, a moved label, one colour) don't need this; a redesigned or new slide does. If the user is away or said to just go, state your assumptions at the top of the reply instead.
 1. **Start a constraints log** (`<deck>_constraints.md`) the first time you revise a deck, and keep it for the whole conversation. Record every requirement the user has stated and every fix they've accepted, one line each. Every later revision must satisfy *all* of it, not just the newest request.
 2. **Inspect first:** render the target slide and the slides around it that define the visual language. Note the recurring elements and conventions you must preserve.
 3. **Change only what's asked.** Copy existing formatting and geometry from established elements; never recreate a box, breadcrumb, or chart style approximately.
+   - **New slides take the deck's own sizes.** Before building a new slide in an existing deck, measure the comparable slides: body and bullet size (e.g., the executive summary's 18 pt bullets), headline size and weight, box fills and corners, chart label sizes. Where those meet the finishing standard, use them exactly, even if the standard would allow smaller. Copy a headline's run formatting from an existing headline (`kit.fill(..., like=existing_title)`): a title placeholder often inherits a much larger size than the deck's slides actually use.
+   - **Size containers to their content.** A chevron, header bar, or box is only as tall as its text plus normal padding; spare height goes to the content below, not into the shape.
+   - **Placeholder slides:** if the deck has slides marked to be replaced ("Replace this slide with your revised version of slide 12"), build the new version there and leave the original untouched as the "before". Leave slides meant for the user's own writing (a reflection, their assessment) for them, unless they ask you to draft them.
 4. **Save a new version** (`deck_v2.pptx`) instead of overwriting, unless the user asks otherwise.
 5. Run `python scripts/compare_versions.py old.pptx new.pptx --focus <slides you were asked to change>`. Every UNEXPECTED change is a regression until proven otherwise: undo it. Then run the full QA loop on every changed slide and its neighbours, **plus** a check of each line in the constraints log.
 6. Report what changed, and any request you couldn't satisfy without breaking another constraint (and the trade-off), rather than silently choosing.

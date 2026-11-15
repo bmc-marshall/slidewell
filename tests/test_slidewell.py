@@ -154,3 +154,19 @@ def test_combo_chart_keeps_both_axes(tmp_path):
     kit.save(str(out))
     errors = [f for f in check(out) if f["level"] == "error"]
     assert not errors, errors
+
+
+def test_fill_copies_headline_formatting(tmp_path):
+    """fill(like=...) gives a new headline the run formatting of an existing one, not the layout's default."""
+    from slidekit import Kit
+    template = EXAMPLES / "templates" / "brackwater-template.pptx"
+    if not template.exists():
+        subprocess.run([sys.executable, str(template.with_name("make_brackwater_template.py"))], check=True)
+    kit = Kit(template=str(template))
+    s1 = kit.new_slide("Title only")
+    t1 = kit.fill(s1, "title", "An existing headline set at 28 pt bold")
+    r = t1.text_frame.paragraphs[0].runs[0]; r.font.size = Pt(28); r.font.bold = True
+    s2 = kit.new_slide("Title only")
+    t2 = kit.fill(s2, "title", "A new headline\vover two lines", like=t1)
+    runs = [r for p_ in t2.text_frame.paragraphs for r in p_.runs]
+    assert len(runs) == 2 and all(r.font.size == Pt(28) and r.font.bold for r in runs)

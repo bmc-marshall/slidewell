@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.2 — November 2026
+## 1.1.0 — November 2026
 
 From a real assignment: rebuilding two slides and adding three to an existing deck.
 

@@ -21,4 +21,6 @@ The instructions are written for Claude to follow, in plain English: say what to
 
 ## Releases
 
-Bump the version in `.claude-plugin/plugin.json` and `pyproject.toml`, add a line to `CHANGELOG.md`, and publish a release on GitHub with a new tag like `v1.1.0`. The workflow attaches `slidewell.zip` to the release.
+Versions follow [semantic versioning](https://semver.org): a **patch** (1.1.0 → 1.1.1) for fixes that add nothing new, a **minor** version (1.1.0 → 1.2.0) for new rules, checks, helpers or questions that don't break existing use, and a **major** version (1.x → 2.0.0) for changes that do, such as renamed files or slidekit functions that build scripts depend on.
+
+Bump the version in `.claude-plugin/plugin.json`, `pyproject.toml` and the release tag in SKILL.md's "If these files aren't there" step, add a line to `CHANGELOG.md`, and publish a release on GitHub with a new tag like `v1.1.0`. The workflow attaches `slidewell.zip` to the release.

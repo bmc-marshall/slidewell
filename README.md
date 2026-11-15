@@ -13,7 +13,7 @@ Give Claude your notes, data or a rough brief. Slidewell asks a few sharp questi
 
 <sub>All slides above are from [`docs/showcase/showcase.pptx`](docs/showcase), built and checked by Slidewell. Every organisation and figure is fictional.</sub>
 
-> **New in 1.1.0:** Slidewell now asks before revising a deck, keeps the wording you supply, takes off anything a slide doesn't need, and catches more chart mistakes. [See what changed](CHANGELOG.md), and [how it was built](#how-it-was-built).
+> **New in 1.1.0:** Slidewell now asks before revising a deck, keeps the wording you supply, takes off anything a slide doesn't need, and catches more chart mistakes. [How it was built](#how-it-was-built).
 
 ---
 
@@ -185,8 +185,6 @@ Slidewell wasn't written in one go. It grew over 17 versions, each one from buil
 - **The finishing standard** grew round by round from reviews of worked examples: wrapping and orphans, colour roles, breathing room, chart labels, durations, animation.
 - **The checker** was tuned until the author's best decks passed cleanly while decks with planted errors were caught, then extended whenever a review found something it missed (including a chart that made PowerPoint offer to repair the file).
 - **Since 1.0,** it has been tested on a real assignment, and the feedback became new rules: what to take off a slide, keeping supplied wording, and asking before revising.
-
-The [changelog](CHANGELOG.md) traces every round, from the first draft (0.1.0) to today.
 
 ## Contributing
 

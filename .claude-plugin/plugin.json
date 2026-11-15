@@ -1,7 +1,7 @@
 {
   "name": "slidewell",
   "description": "Build and revise consulting-grade PowerPoint (.pptx) decks: the storyline is approved before building, and every slide is checked against a finishing standard before delivery.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": {
     "name": "Ben Marshall"
   },

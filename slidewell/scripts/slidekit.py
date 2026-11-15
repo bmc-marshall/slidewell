@@ -106,26 +106,25 @@ def describe_chart(gf):
     return "; ".join(bits) + "."
 
 
-ICONS_ZIP = __import__("os").path.join(__import__("os").path.dirname(__import__("os").path.abspath(__file__)), "..", "assets", "icons.zip")
+ICONS_DIR = __import__("os").path.join(__import__("os").path.dirname(__import__("os").path.abspath(__file__)), "..", "assets", "icons")
 
 
 @lru_cache(maxsize=1)
 def icon_names():
     """The names of the bundled icons (also listed in assets/icons.txt)."""
-    import zipfile
-    with zipfile.ZipFile(ICONS_ZIP) as z:
-        return tuple(sorted(n[4:-4] for n in z.namelist() if n.startswith("png/")))
+    import os
+    return tuple(sorted(f[:-4] for f in os.listdir(ICONS_DIR) if f.endswith(".png")))
 
 
 def _icon_png(name, col):
-    """Recolour a bundled black icon mask (assets/icons.zip, png/<name>.png) with Pillow: no SVG tools needed."""
-    import io, os, tempfile, zipfile
+    """Recolour a bundled black icon mask (assets/icons/<name>.png) with Pillow: no SVG tools needed."""
+    import os, tempfile
     from PIL import Image
     out = os.path.join(tempfile.gettempdir(), "slidewell_icons", f"{name}-{col}.png")
     if not os.path.exists(out):
         os.makedirs(os.path.dirname(out), exist_ok=True)
-        with zipfile.ZipFile(ICONS_ZIP) as z:
-            a = Image.open(io.BytesIO(z.read(f"png/{name}.png"))).getchannel("A")
+        with Image.open(os.path.join(ICONS_DIR, f"{name}.png")) as src:
+            a = src.getchannel("A")
         im = Image.new("RGBA", a.size, tuple(int(col[i:i + 2], 16) for i in (0, 2, 4)) + (0,))
         im.putalpha(a)
         im.save(out)
@@ -797,7 +796,7 @@ class Kit:
         return ph
 
     def icon(self, slide, name, x, y, size, color=None, circle=None, pad=0.22):
-        """An icon from the bundled open-licence set (assets/icons.zip, names in assets/icons.txt; Lucide, ISC licence), recoloured and placed
+        """An icon from the bundled open-licence set (assets/icons/, names in assets/icons.txt; Lucide, ISC licence), recoloured and placed
         as a crisp PNG. circle: a fill colour to set the icon (in white) inside a solid circle. One icon set, one
         style, one colour per deck (visual-identity §4b)."""
         if name not in icon_names():

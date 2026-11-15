@@ -201,3 +201,17 @@ def test_checker_catches_label_formats_and_chart_plus_table(tmp_path):
     assert ("error", "number-format") in found       # a decimal on values of 10 or more
     assert ("warning", "number-format") in found     # "K" suffix in labels
     assert ("warning", "redundancy") in found        # chart and table of numbers together
+
+
+def test_skill_folder_has_no_nested_archives():
+    """claude.ai rejects a skill zip that contains another zip, so nothing inside slidewell/ may be an archive."""
+    bad = [p for p in SKILL.rglob("*") if p.suffix.lower() in (".zip", ".skill", ".tar", ".gz", ".7z", ".rar")]
+    assert not bad, bad
+
+
+def test_icons_load_from_folder(tmp_path):
+    from slidekit import Kit, icon_names
+    names = icon_names()
+    assert len(names) == 114 and "leaf" in names
+    kit = Kit(); s = kit.new_slide()
+    assert kit.icon(s, "leaf", 1, 1, 0.6).name == "Icon leaf"

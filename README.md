@@ -166,7 +166,7 @@ It catches what reviewers usually catch by eye: text below readable sizes, more 
 | `references/review-brief.md` | What the internal reviewer looks for in each round |
 | `references/qa.md` | The QA loop, accuracy pass and checklists |
 | `scripts/` | Checker, renderer, version comparison, and the build library (including template mode) |
-| `assets/icons.zip` | 114 icons from [Lucide](https://lucide.dev) (ISC licence), packed in one file and recoloured to your brand; names in `assets/icons.txt` |
+| `assets/icons/` | 114 icons from [Lucide](https://lucide.dev) (ISC licence), recoloured to your brand; names in `assets/icons.txt` |
 | `tests/` | Rebuilds every example and tests the checker, template mode and fallbacks |
 
 ## Limitations

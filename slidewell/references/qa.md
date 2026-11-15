@@ -32,13 +32,11 @@ Remember that renders here may substitute fonts; distinguish real issues from su
 
 After the QA loop passes, run review rounds: an internal version of a demanding human reviewer going through the deck slide by slide. It catches what checkers can't: things that look off, crowded, generic, or inconsistent.
 
-1. **Reviewer.** Where you can start a separate agent (a subagent), do: give it only the rendered slide images (full size, one per slide), `references/review-brief.md`, `finishing-standard.md`, and the approved storyline; not the build script or your reasoning. A reviewer that didn't build the deck isn't marking its own work. Where you can't, do the review yourself as a separate pass: re-read the brief first, then look at each slide image fresh, as if someone else made it.
+1. **Reviewer.** If you can start a separate agent (a subagent), you must: give it only the rendered slide images (full size, one per slide), `references/review-brief.md`, `finishing-standard.md`, `charts.md`, the approved storyline, the audience and use from intake, and any text the user supplied (storyboard, brief); not the build script or your reasoning. A reviewer that didn't build the deck isn't marking its own work, and the builder reliably misses the same things the second time (what could come off, a headline that misses the point). Only if no subagent is available, do the review yourself as a separate pass: re-read the brief first, then look at each slide image fresh, as if someone else made it, and **say in the QA report that the review wasn't independent**.
 2. **Findings.** The reviewer returns a numbered list, worst first: slide, what's wrong, which rule, how serious (*must fix*: breaks a rule or looks wrong; *should fix*: noticeably weaker; *polish*). It must look at every slide individually and say "no issues" for a slide only after checking it against the brief.
 3. **Fix.** Fix every must-fix and should-fix item, re-render the changed slides, re-run `check_deck.py` (a fix can break something else), and update the constraints log.
 4. **Repeat** with a new review of the changed slides and their neighbours, until a round finds no must-fix or should-fix items, or after three rounds. Don't loop forever: after three rounds, list what's still open in the QA report.
 5. **Record** each round (findings and fixes) for the QA report at delivery.
-
-## 3. Per-slide checklist
 
 ## 3. Per-slide checklist
 
@@ -61,7 +59,8 @@ After the QA loop passes, run review rounds: an internal version of a demanding 
 17. Charts: title, axis line, axis title/units, zero baseline, ticks, light gridlines (`charts.md` §6)
 18. Charts: title clearance, label clearance, axis-label proximity, tick alignment, no bar/axis overlap; commentary matches the chart
 19. Numbers correct (accuracy pass), rounded sensibly; abbreviations clear; status markers where needed; durations in natural units
-20. No invented facts and no over-claiming; no meaningless design machinery
+20. No invented facts or sources and no over-claiming; no meaningless design machinery; supplied text used word for word
+20b. Nothing on the slide that could come off: no repeat of the headline, numbers shown once, nothing out of scope or aimed at another audience
 21. No regression from any previously accepted version
 
 ## 4. Deck-level checklist

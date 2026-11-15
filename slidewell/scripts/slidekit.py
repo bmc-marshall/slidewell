@@ -26,7 +26,9 @@ What it handles for you (see references/finishing-standard.md for the reasons):
 - chart titles aligned with the axis (chart_title); takeaways beside a chart spread down the plot (side_points)
 - imagery: photos cropped to fill or placeholder frames (photo), legibility overlays (overlay), icons (icon),
   one deck-wide transition (transition)
-- chart helpers: transparent chart areas, fixed plot layout, axis styling, line labels centred on lines
+- chart helpers: transparent chart areas, fixed plot layout, axis styling, line labels centred on lines,
+  column + line on two visible axes (combo_chart), keys with text centred on each swatch (legend)
+- adding slides to an existing deck: fill(..., like=existing_headline) copies that headline's formatting
 Fonts are measured with the real metrics of the installed font (sw_fonts.py: fontconfig, or the OS font folders), so use fonts that are
 installed here or have metric-compatible stand-ins (Arial, Times New Roman, Cambria...).
 """

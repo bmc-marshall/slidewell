@@ -182,3 +182,22 @@ def test_legend_text_centred_on_swatch():
     for sw, tx in zip(shapes[0::2], shapes[1::2]):
         assert abs((sw.top + sw.height / 2) - (tx.top + tx.height / 2)) < 2000   # EMU; well under a point
         assert tx.text_frame.vertical_anchor == MSO_ANCHOR.MIDDLE
+
+
+def test_checker_catches_label_formats_and_chart_plus_table(tmp_path):
+    """'$31.0K'-style labels are flagged, and a chart plus a table of numbers on one slide is a redundancy warning."""
+    prs = Presentation()
+    prs.slide_width, prs.slide_height = Inches(13.333), Inches(7.5)
+    s = prs.slides.add_slide(prs.slide_layouts[6])
+    cd = CategoryChartData(); cd.categories = ["2018", "2019", "2020"]; cd.add_series("Income", (31000, 32000, 33000))
+    ch = s.shapes.add_chart(XL_CHART_TYPE.COLUMN_CLUSTERED, Inches(0.6), Inches(1.5), Inches(7), Inches(4), cd).chart
+    ch.plots[0].has_data_labels = True; dl = ch.plots[0].data_labels
+    dl.show_value = True; dl.number_format = '$#,##0.0,"K"'; dl.number_format_is_linked = False
+    t = s.shapes.add_table(4, 2, Inches(8), Inches(1.5), Inches(4), Inches(2)).table
+    for r, (a, b) in enumerate([("Year", "Income"), ("2018", "31,000"), ("2019", "32,000"), ("2020", "33,000")]):
+        t.cell(r, 0).text, t.cell(r, 1).text = a, b
+    p = tmp_path / "labels.pptx"; prs.save(p)
+    found = {(f["level"], f["rule"]) for f in check(p)}
+    assert ("error", "number-format") in found       # a decimal on values of 10 or more
+    assert ("warning", "number-format") in found     # "K" suffix in labels
+    assert ("warning", "redundancy") in found        # chart and table of numbers together

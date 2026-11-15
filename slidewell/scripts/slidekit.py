@@ -971,6 +971,83 @@ class Kit:
             etree.SubElement(spPr, f"{{{A}}}noFill")
             ln = etree.SubElement(spPr, f"{{{A}}}ln"); etree.SubElement(ln, f"{{{A}}}noFill")
 
+    def combo_chart(self, slide, x, y, w, h, categories, bars, line, bar_axis_title, line_axis_title,
+                    bar_max=None, line_min=None, line_max=None, bar_fmt="#,##0", line_fmt="0%", pt=14,
+                    bar_color=None, line_color=None):
+        """Columns on the left axis plus one line on a right-hand axis (two measures that move together over time).
+        bars: list of (name, values); line: (name, values). Both value axes stay visible, each titled with its unit
+        and coloured to match its series, so the reader can tell which scale belongs to which mark.
+        Scale the two axes so the line runs above the columns (line_min below zero is fine; label it) and the
+        marks never cross. Returns the graphic frame; add data labels on the plots as for any chart.
+        Why the XML: python-pptx has no combo charts. The line series moves into a lineChart bound to a second
+        category/value axis pair. Never delete that secondary axis: LibreOffice then plots the line on the
+        primary scale, and the checker rejects hidden value axes anyway."""
+        from pptx.chart.axis import ValueAxis
+        from pptx.enum.chart import XL_CHART_TYPE, XL_TICK_MARK
+        from pptx.oxml import parse_xml
+        cd = CategoryChartData(); cd.categories = list(categories)
+        for name, vals in bars:
+            cd.add_series(name, list(vals))
+        cd.add_series(line[0], list(line[1]))
+        gf = slide.shapes.add_chart(XL_CHART_TYPE.COLUMN_CLUSTERED, Inches(x), Inches(y), Inches(w), Inches(h), cd)
+        ch = gf.chart; self.style_chart(ch, pt)
+        va = ch.value_axis; va.minimum_scale = 0
+        if bar_max is not None:
+            va.maximum_scale = bar_max
+        va.has_major_gridlines = False; va.major_tick_mark = XL_TICK_MARK.OUTSIDE
+        va.tick_labels.number_format = bar_fmt; va.tick_labels.number_format_is_linked = False
+        self.axis(va, bar_axis_title, pt)
+        self.axis(ch.category_axis, None, pt); ch.category_axis.major_tick_mark = XL_TICK_MARK.NONE
+        plot = ch._chartSpace.find(f".//{{{C}}}plotArea")
+        bar = plot.find(f"{{{C}}}barChart")
+        ser = bar.findall(f"{{{C}}}ser")[-1]; bar.remove(ser)
+        inv = ser.find(f"{{{C}}}invertIfNegative")
+        if inv is not None:
+            ser.remove(inv)
+        etree.SubElement(ser, f"{{{C}}}smooth").set("val", "0")
+        lc = etree.Element(f"{{{C}}}lineChart")
+        etree.SubElement(lc, f"{{{C}}}grouping").set("val", "standard")
+        etree.SubElement(lc, f"{{{C}}}varyColors").set("val", "0")
+        lc.append(ser)
+        etree.SubElement(lc, f"{{{C}}}marker").set("val", "1")
+        for v in ("50000001", "50000002"):
+            etree.SubElement(lc, f"{{{C}}}axId").set("val", v)
+        bar.addnext(parse_xml(etree.tostring(lc)))   # parse_xml gives python-pptx's own element classes
+        scaling = '<c:orientation val="minMax"/>'
+        if line_max is not None:
+            scaling += f'<c:max val="{line_max}"/>'
+        if line_min is not None:
+            scaling += f'<c:min val="{line_min}"/>'
+        cat2 = parse_xml(
+            f'<c:catAx xmlns:c="{C}"><c:axId val="50000001"/><c:scaling><c:orientation val="minMax"/></c:scaling>'
+            '<c:delete val="1"/><c:axPos val="b"/><c:majorTickMark val="none"/><c:minorTickMark val="none"/>'
+            '<c:tickLblPos val="nextTo"/><c:crossAx val="50000002"/><c:crosses val="autoZero"/><c:auto val="1"/>'
+            '<c:lblAlgn val="ctr"/><c:lblOffset val="100"/><c:noMultiLvlLbl val="0"/></c:catAx>')
+        val2 = parse_xml(
+            f'<c:valAx xmlns:c="{C}"><c:axId val="50000002"/><c:scaling>{scaling}</c:scaling>'
+            f'<c:delete val="0"/><c:axPos val="r"/><c:numFmt formatCode="{line_fmt}" sourceLinked="0"/>'
+            '<c:majorTickMark val="out"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/>'
+            '<c:crossAx val="50000001"/><c:crosses val="max"/><c:crossBetween val="between"/></c:valAx>')
+        last = plot.findall(f"{{{C}}}valAx")[-1]
+        last.addnext(cat2); cat2.addnext(val2)
+        self.axis(ValueAxis(val2), line_axis_title, pt)
+        bar_color = bar_color or self.T["grey"]; line_color = line_color or self.T["main"]
+        for s_ in ch.plots[0].series:
+            s_.format.fill.solid(); s_.format.fill.fore_color.rgb = bar_color
+        ch.plots[0].gap_width = 60
+        ls = ch.plots[1].series[0]
+        ls.format.line.color.rgb = line_color; ls.format.line.width = Pt(2.25); ls.smooth = False
+        ls.marker.style = None
+        m = ls._element.get_or_add_marker(); m.get_or_add_symbol().set("val", "none")
+        for ax_el, col in ((va._element, bar_color), (val2, line_color)):   # colour-code each axis title to its series
+            for r in ax_el.findall(f".//{{{C}}}title//{{{A}}}r"):
+                rpr = r.find(f"{{{A}}}rPr")
+                for f in rpr.findall(f"{{{A}}}solidFill"):
+                    rpr.remove(f)
+                sf = etree.Element(f"{{{A}}}solidFill"); etree.SubElement(sf, f"{{{A}}}srgbClr").set("val", str(col))
+                rpr.insert(0, sf)
+        return gf
+
     def line_label(self, slide, x, y_line, s, pt=16, color=None, bold=True, w=2.0):
         """Label at the end of a line: box vertically centred on the line, text vertically centred in the box."""
         h = pt * 1.2 / 72 + 0.06

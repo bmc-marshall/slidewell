@@ -3,6 +3,7 @@
 [![tests](https://github.com/bmc-marshall/slidewell/actions/workflows/test.yml/badge.svg)](https://github.com/bmc-marshall/slidewell/actions/workflows/test.yml)
 [![licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
 [![Claude skill](https://img.shields.io/badge/Claude-skill-c96442.svg)](#install)
+[![release](https://img.shields.io/github/v/release/bmc-marshall/slidewell)](https://github.com/bmc-marshall/slidewell/releases)
 
 **Consulting-grade PowerPoint decks with Claude. The story is agreed before anything is built, and every slide is checked before you see it.**
 
@@ -11,6 +12,8 @@ Give Claude your notes, data or a rough brief. Slidewell asks a few sharp questi
 ![Five slides built by Slidewell: a profit bridge, a KPI dashboard, an annotated seasonal chart, a PESTLE scan, and an executive summary](docs/images/hero.png)
 
 <sub>All slides above are from [`docs/showcase/showcase.pptx`](docs/showcase), built and checked by Slidewell. Every organisation and figure is fictional.</sub>
+
+> **New in 1.1.0:** Slidewell now asks before revising a deck, keeps the wording you supply, takes off anything a slide doesn't need, and catches more chart mistakes. [How it was built](#how-it-was-built).
 
 ---
 
@@ -172,6 +175,16 @@ It catches what reviewers usually catch by eye: text below readable sizes, more 
 - Fonts that aren't installed where Claude runs are measured with metric-compatible stand-ins where they exist (Calibri, Cambria, Arial, Times New Roman). For other brand fonts, Slidewell leaves extra room in text boxes and asks you to check fit on your machine.
 - Photos are placeholder frames labelled with the picture each one needs. Add your own images in PowerPoint.
 - It writes PowerPoint. For Google Slides, import the `.pptx`; Keynote opens it directly.
+
+## How it was built
+
+Slidewell wasn't written in one go. It grew over 17 versions, each one from building real decks, reviewing them slide by slide, and turning every piece of feedback into a general rule with its reason:
+
+- **The first draft** started from the author's own design rules, QA checklist and a log of where AI-built slides kept going wrong.
+- **The storyline examples** were drawn from about 480 headlines across 18 real decks.
+- **The finishing standard** grew round by round from reviews of worked examples: wrapping and orphans, colour roles, breathing room, chart labels, durations, animation.
+- **The checker** was tuned until the author's best decks passed cleanly while decks with planted errors were caught, then extended whenever a review found something it missed (including a chart that made PowerPoint offer to repair the file).
+- **Since 1.0,** it has been tested on a real assignment, and the feedback became new rules: what to take off a slide, keeping supplied wording, and asking before revising.
 
 ## Contributing
 

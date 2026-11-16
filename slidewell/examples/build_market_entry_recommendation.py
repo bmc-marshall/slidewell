@@ -52,10 +52,10 @@ CHART_TOP = None                # set from the first chart slide; slides with th
 AX = 14 * 1.2 / 72 + 0.12       # chart titles start at the axis labels, not at the rotated axis title
 
 
-def panel(s, rx, top, pw, title, points, plot_top, plot_bottom):
+def panel(s, rx, top, pw, title, points, plot_top, plot_bottom, lead_color=ROAST):
     """Takeaways beside a chart: header level with the chart title, points spread down the plotted data."""
     kit.chart_header(s, rx, top, pw, title)
-    kit.side_points(s, rx, pw, plot_top, plot_bottom, points, lead_color=ROAST)
+    kit.side_points(s, rx, pw, plot_top, plot_bottom, points, lead_color=lead_color)
 
 
 def italic(tb):
@@ -117,12 +117,7 @@ for ser, col, w, dash in zip(ch.plots[0].series, [GOLD, GOLD, ROAST, ROAST], [3,
     ser.format.line.color.rgb = col; ser.format.line.width = Pt(w); ser.smooth = False
     if dash:
         ser.format.line.dash_style = dash
-    ser.marker.style = None
-    from lxml import etree
-    m_ = ser._element.find("{http://schemas.openxmlformats.org/drawingml/2006/chart}marker")
-    if m_ is None:
-        m_ = etree.SubElement(ser._element, "{http://schemas.openxmlformats.org/drawingml/2006/chart}marker")
-    etree.SubElement(m_, "{http://schemas.openxmlformats.org/drawingml/2006/chart}symbol").set("val", "none")
+    kit.no_markers(ser)
 va = ch.value_axis; va.has_major_gridlines = False; va.minimum_scale = 0; va.maximum_scale = 300; va.major_unit = 100
 kit.axis(va, "Spend (£M)"); kit.axis(ch.category_axis, pt=12)
 n = len(years)
@@ -137,7 +132,8 @@ rx = M + cw + 0.5
 panel(s, rx, top, W - M - rx, "Growth, 2020–2030E", [
     ("Northfield:", "about 8% a year, to £270M by 2030"),
     ("Home region:", "about 3% a year"),
-    ("By 2030:", "Northfield would be nearly the size of our home market")], cy + PY * chh, cy + (PY + PH) * chh)
+    ("By 2030:", "Northfield would be nearly the size of our home market")], cy + PY * chh, cy + (PY + PH) * chh,
+      lead_color=ESP)   # roast is the Home line's colour here, so lead-ins about Northfield can't use it
 
 # ---------------------------------------------------------------- 4 districts: scatter with target zone
 s = slide(4, "Locations", "Two university districts offer high footfall and the least competition",

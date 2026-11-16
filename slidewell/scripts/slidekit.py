@@ -20,14 +20,18 @@ What it handles for you (see references/finishing-standard.md for the reasons):
 - real bullets with hanging indents and brand-coloured bullet characters (bullet_list)
 - shapes and connectors with NO shadows, including theme-inherited ones (no_effects)
 - small open arrowheads (arrow), opaque badges (badge), evenly placed markers (markers_between)
-- fixed-size, left-aligned header tag; source + page number on one bottom baseline (frame)
+- fixed-size, left-aligned header tag, or a "kicker" label above the headline (theme header_style="kicker");
+  source + page number on one bottom baseline (frame), or page number centred on a footer band's mid-line
+  (theme footer_mid) so it lines up with the logos
+- logo lockups with dividers exactly midway between the measured names (lockup)
 - fixed deck-wide anchors (anchors): content top, content bottom, decision-bar position, so recurring
   elements sit in the same place on every slide; vertically balanced blocks (place_balanced)
 - chart titles aligned with the axis (chart_title); takeaways beside a chart spread down the plot (side_points)
 - imagery: photos cropped to fill or placeholder frames (photo), legibility overlays (overlay), icons (icon),
   one deck-wide transition (transition)
 - chart helpers: transparent chart areas, fixed plot layout, axis styling, line labels centred on lines,
-  column + line on two visible axes (combo_chart), keys with text centred on each swatch (legend)
+  column + line on two visible axes (combo_chart), keys with text centred on each swatch (legend),
+  lines without markers (no_markers: use it instead of hand-written <c:marker> XML, which PowerPoint can refuse)
 - adding slides to an existing deck: fill(..., like=existing_headline) copies that headline's formatting
 Fonts are measured with the real metrics of the installed font (sw_fonts.py: fontconfig, or the OS font folders), so use fonts that are
 installed here or have metric-compatible stand-ins (Arial, Times New Roman, Cambria...).
@@ -522,25 +526,35 @@ class Kit:
 
     def lead_points(self, slide, x, y, w, items, pt=18, gap=0.22, lead_color=None, target_h=None, max_gap=None):
         """Short takeaways: bold lead-in in a brand colour, then plain text. If target_h is given, the gap
-        between points grows (up to max_gap, default one line) so the block approaches that height."""
+        between points grows (up to max_gap, default one line) so the block approaches that height.
+        items: (lead, rest) or (lead, rest, colour). A per-item colour is for a slide with a chart: a lead-in
+        coloured like a series must be ABOUT that series; give the others neutral ink (lead_color=T["ink"]).
+        A context qualifier goes on its own line in brackets, starting rest with "\v":
+        ("14 new clients", "\v(nine of them from referrals)"), never tacked on after a comma."""
         heights = []
-        for lead, rest in items:
-            toks = [(t, True) for t in lead.split(" ")] + [(t, False) for t in rest.split(" ")]
-            k = self.smart_break(toks, w, pt)
-            n_lead = len(lead.split(" "))
-            if k is not None and k > n_lead:
-                rw = rest.split(" "); kk = k - n_lead
-                rest_t = " " + " ".join(rw[:kk]) + "\v" + " ".join(rw[kk:])
+        for item in items:
+            lead, rest = item[0], item[1]
+            col = item[2] if len(item) > 2 else None
+            if rest.startswith("\v"):                                   # qualifier on its own line
+                rest_t = rest
             else:
-                rest_t = " " + rest
+                toks = [(t, True) for t in lead.split(" ")] + [(t, False) for t in rest.split(" ")]
+                k = self.smart_break(toks, w, pt)
+                n_lead = len(lead.split(" "))
+                if k is not None and k > n_lead:
+                    rw = rest.split(" "); kk = k - n_lead
+                    rest_t = " " + " ".join(rw[:kk]) + "\v" + " ".join(rw[kk:])
+                else:
+                    rest_t = " " + rest if rest else ""
             full = lead + rest_t
-            heights.append((lead, rest_t, self.lines(full.replace("\v", "\v"), pt, w) * pt * 1.2 / 72 + 0.03))
+            heights.append((lead, rest_t, col, self.lines(full, pt, w) * pt * 1.2 / 72 + 0.03))
         text_h = sum(h for *_, h in heights)
         if target_h and len(items) > 1:
             max_gap = max_gap if max_gap is not None else pt * 1.2 / 72
             gap = min(max_gap, max(gap, (target_h - text_h) / (len(items) - 1)))
-        for lead, rest_t, h in heights:
-            self.text(slide, x, y, w, h, [[(lead, True, lead_color or self.T["main"]), (rest_t, False, self.T["ink"])]], pt, smart=False)
+        for lead, rest_t, col, h in heights:
+            runs = [(lead, True, col or lead_color or self.T["main"])] + ([(rest_t, False, self.T["ink"])] if rest_t else [])
+            self.text(slide, x, y, w, h, [runs], pt, smart=False)
             y += h + gap
         return y - gap
 
@@ -851,10 +865,45 @@ class Kit:
 
     # ------------------------------------------------------------------ recurring elements
     def header_tag(self, slide, label, fill=None):
-        """Fixed-size header box on every slide, flush with the top-left edge, label left-aligned at the margin."""
-        self.shape(slide, MSO_SHAPE.RECTANGLE, 0, 0, self.tag_w, self.T["tag_h"], fill or self.T["main"])
-        self.text(slide, self.T["M"], 0, self.tag_w - self.T["M"], self.T["tag_h"], label.upper(), 11,
-                  self.T["white"], bold=True, anchor=MSO_ANCHOR.MIDDLE, wrap=False, smart=False)
+        """Section label on every content slide, in one of two styles (theme key header_style):
+        "tag" (default): a fixed-size box flush with the top-left edge, label left-aligned at the margin. Its
+          straight edges suit decks whose shape language is straight; next to a curved motif it clashes.
+        "kicker": no box; the label in small caps above the headline, left-aligned with it, in a lighter brand
+          colour (theme key kicker_color, default a light tint of the main colour). Suits most motif-led decks."""
+        T = self.T
+        if T.get("header_style") == "kicker":
+            top = T.get("kicker_top", T["head_top"] - 0.42)
+            self.text(slide, T["M"], top, self.CW, 0.3, label.upper(), T.get("kicker_pt", 13),
+                      T.get("kicker_color") or self.tint(T["main"], 0.45), bold=True, anchor=MSO_ANCHOR.BOTTOM, smart=False)
+            return
+        self.shape(slide, MSO_SHAPE.RECTANGLE, 0, 0, self.tag_w, T["tag_h"], fill or T["main"])
+        # wrap stays on (the box is wide enough): with wrap off, LibreOffice renders the label centred, so the
+        # previews would disagree with PowerPoint
+        self.text(slide, T["M"], 0, self.tag_w - T["M"], T["tag_h"], label.upper(), 11,
+                  T["white"], bold=True, anchor=MSO_ANCHOR.MIDDLE, smart=False)
+
+    def lockup(self, slide, x, y_mid, parts, gap=0.16, divider_color=None, divider_h=None, lw=0.75):
+        """Logos or wordmarks in a row, separated by thin dividers placed exactly midway between the measured
+        text (not the text boxes). parts: [(text, pt, bold, color, font), ...]. Every element is vertically
+        centred on y_mid, so the lockup lines up with a page number centred on the same line (footer_mid).
+        Use the same x and y_mid on every slide; on a title slide either use them too, or make the lockup
+        clearly larger, never a near-miss. Returns the right edge of the lockup."""
+        cx = x
+        for k, (s, pt, bold, color, font) in enumerate(parts):
+            if k:
+                dh = divider_h or pt * 1.1 / 72
+                cx += gap
+                self.line(slide, cx, y_mid - dh / 2, cx, y_mid + dh / 2, divider_color or self.T["light"], lw)
+                cx += gap
+            w = self.width_in(s, pt, bold, font)                  # the measured ink width, which the gaps are built on
+            h = pt * 1.3 / 72
+            # wrap=True with a box wider than the text, left-aligned and zero insets: the text starts exactly at cx in
+            # PowerPoint AND LibreOffice. (A wrap=False box is centred on its box by LibreOffice but left-aligned by
+            # PowerPoint, which pushed the divider off-centre in previews.)
+            self.text(slide, cx, y_mid - h / 2, w + 0.3, h, [[(s, bold, color)]], pt, font=font,
+                      align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.MIDDLE, wrap=True, smart=False)
+            cx += w
+        return cx
 
     def frame(self, slide, n, tag, headline, source=None, head_color=None):
         """Headline, header tag, source note and page number, in the same place on every slide.
@@ -882,7 +931,13 @@ class Kit:
         self._src_lines = self.lines(source, T["small_pt"], self.CW - 1.0) if source else 0
         if source:
             self.text(slide, T["M"], T["foot_top"], self.CW - 1.0, 0.3, source, T["small_pt"], T["grey"], anchor=MSO_ANCHOR.BOTTOM)
-        if n:
+        if n and T.get("footer_mid"):
+            # a footer band (logos + page number): the page number is centred vertically on the same line as the
+            # logos, with its text anchored middle, so the two read as one row
+            h = 0.3
+            self.text(slide, T["W"] - T["M"] - 0.6, T["footer_mid"] - h / 2, 0.6, h, str(n), T.get("page_pt", T["small_pt"]),
+                      T.get("page_color") or T["grey"], align=PP_ALIGN.RIGHT, anchor=MSO_ANCHOR.MIDDLE, smart=False)
+        elif n:
             # the page number stays low in the corner; it shares the note's baseline only when the note is the
             # lowest element (page_num_top moves it down when a bottom tracker pushes the notes up)
             self.text(slide, T["W"] - T["M"] - 0.6, T.get("page_num_top") or T["foot_top"], 0.6, 0.3, str(n), T["small_pt"], T["grey"],
@@ -972,6 +1027,15 @@ class Kit:
             etree.SubElement(ml, f"{{{C}}}{tag}").set("val", str(val))
 
     @staticmethod
+    def no_markers(series):
+        """Plain line with no point markers, through python-pptx's own API. Don't add <c:marker>/<c:symbol>
+        by hand: a line series already has a marker element, and a second <c:symbol> (or one out of schema order)
+        makes PowerPoint refuse the file and offer to repair it, while LibreOffice renders it without complaint."""
+        from pptx.enum.chart import XL_MARKER_STYLE
+        series.marker.style = XL_MARKER_STYLE.NONE
+        return series
+
+    @staticmethod
     def transparent_chart(chart):
         cs = chart._chartSpace
         for parent in (cs, cs.find(f".//{{{C}}}plotArea")):
@@ -987,12 +1051,16 @@ class Kit:
 
     def combo_chart(self, slide, x, y, w, h, categories, bars, line, bar_axis_title, line_axis_title,
                     bar_max=None, line_min=None, line_max=None, bar_fmt="#,##0", line_fmt="0%", pt=14,
-                    bar_color=None, line_color=None):
+                    bar_color=None, line_color=None, bar_labels=True):
         """Columns on the left axis plus one line on a right-hand axis (two measures that move together over time).
         bars: list of (name, values); line: (name, values). Both value axes stay visible, each titled with its unit
         and coloured to match its series, so the reader can tell which scale belongs to which mark.
-        Scale the two axes so the line runs above the columns (line_min below zero is fine; label it) and the
-        marks never cross. Returns the graphic frame; add data labels on the plots as for any chart.
+        Scale the two axes so the line runs above the columns AND their value labels (line_min below zero is
+        fine; label it) and the marks never cross: slidekit warns when the line comes within a label's height of
+        a column top. Columns carry value labels by default (bar_labels), since columns read against a scale on
+        the far side of the chart are hard to read. Each axis title is rotated so the bottom of its letters faces
+        its own axis: the left title reads bottom-to-top, the right-hand one top-to-bottom.
+        Returns the graphic frame.
         Why the XML: python-pptx has no combo charts. The line series moves into a lineChart bound to a second
         category/value axis pair. Never delete that secondary axis: LibreOffice then plots the line on the
         primary scale, and the checker rejects hidden value axes anyway."""
@@ -1053,6 +1121,28 @@ class Kit:
         ls.format.line.color.rgb = line_color; ls.format.line.width = Pt(2.25); ls.smooth = False
         ls.marker.style = None
         m = ls._element.get_or_add_marker(); m.get_or_add_symbol().set("val", "none")
+        # the right-hand title is rotated +90 degrees (reads top-to-bottom) so the bottom of the text faces the axis
+        # on its left; PowerPoint's default (-90) would turn its back on that axis
+        for bp in val2.findall(f".//{{{C}}}title//{{{A}}}bodyPr"):
+            bp.set("rot", "5400000"); bp.set("vert", "horz")
+        if bar_labels:
+            from pptx.enum.chart import XL_LABEL_POSITION
+            pl = ch.plots[0]; pl.has_data_labels = True
+            lab_fmt = bar_fmt
+            if bar_fmt == "#,##0" and any(v != int(v) and abs(v) < 10 for _, vs in bars for v in vs):
+                lab_fmt = "#,##0.0"                                      # never round 3.4 to "3" in a label
+            dl = pl.data_labels; dl.number_format = lab_fmt; dl.number_format_is_linked = False
+            dl.position = XL_LABEL_POSITION.OUTSIDE_END; dl.font.size = Pt(pt); dl.font.color.rgb = self.T["ink"]
+            if bar_max is not None and line_min is not None and line_max is not None:
+                plot_h = h - 0.6                                         # roughly: minus the category labels
+                lab = (pt * 1.3 / 72 + 0.08) / plot_h                    # a label's height, as a share of the plot
+                for cat, *vals in zip(categories, *[v for _, v in bars], line[1]):
+                    top_ = max(vals[:-1]) / bar_max + lab
+                    lf = (vals[-1] - line_min) / (line_max - line_min)
+                    if lf < top_ + 0.03:
+                        print(f"slidekit: combo_chart: at {cat!r} the line runs into the column's value label: raise "
+                              "bar_max or lower line_min so the line clears the labels", file=sys.stderr)
+                        break
         for ax_el, col in ((va._element, bar_color), (val2, line_color)):   # colour-code each axis title to its series
             for r in ax_el.findall(f".//{{{C}}}title//{{{A}}}r"):
                 rpr = r.find(f"{{{A}}}rPr")

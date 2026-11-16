@@ -64,7 +64,7 @@ kit.arrow(s, mx + 0.45, top + 2.15, mx - 0.45, top + 2.15, GREEN, 1.75)
 # 4 activities: one year
 s = slide(4, "Activities", "We would run volunteering projects, speaker events, and skills workshops through the year")
 terms = ["Autumn term", "Spring term", "Summer term"]
-acts = [("Volunteering projects", ["Match 6 teams to local charities", "Projects run, mid-point check-in", "Hand-over and showcase"]),
+acts = [("Volunteering projects", ["Match six teams to local charities", "Projects run, mid-point check-in", "Hand-over and showcase"]),
         ("Speaker events", ["Charity founders' panel", "Careers in the social sector", "End-of-year celebration"]),
         ("Skills workshops", ["Scoping a project", "Data for good", "Pitching for funding"])]
 c0, cw3 = 2.9, (CW - 2.9) / 3

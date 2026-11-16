@@ -21,9 +21,9 @@ assert 2 * 3100 == 6200                                         # "double the ch
 def lockup(s, x, y, dark=False):
     """Co-branded lockup (visual-identity §4c): client first, thin divider, then the consultancy; one baseline."""
     c1, c2 = (T["white"], T["white"]) if dark else (TEAL, NAVY)
-    kit.text(s, x, y, 1.15, 0.3, [[("TIDEWATER", True, c1)]], 12, anchor=MSO_ANCHOR.MIDDLE, smart=False)
-    kit.line(s, x + 1.25, y + 0.04, x + 1.25, y + 0.26, kit.tint(NAVY, 0.6) if not dark else PALE, 0.75)
-    kit.text(s, x + 1.35, y, 1.2, 0.3, [[("Northlight", True, c2)]], 12, anchor=MSO_ANCHOR.MIDDLE, smart=False)
+    # kit.lockup measures both names and puts the divider exactly midway between them
+    kit.lockup(s, x, y + 0.15, [("TIDEWATER", 12, True, c1, None), ("Northlight", 12, True, c2, None)],
+               divider_color=kit.tint(NAVY, 0.6) if not dark else PALE)
 
 
 def slide(n, headline, source=None):

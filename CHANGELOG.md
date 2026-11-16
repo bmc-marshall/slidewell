@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.2.0 — November 2026
+
+From building and reviewing two new decks (a co-branded proposal and a brand workshop), merged with 1.1.1.
+
+- **PowerPoint no longer asks to repair decks with plain lines.** Hand-added `<c:symbol>` elements duplicated the marker python-pptx already writes, so PowerPoint flagged the file while LibreOffice rendered it fine. New `kit.no_markers()` uses the library's own API. The checker gains a **file-integrity** check for chart and slide XML out of schema order or duplicated (it caught the same bug in the showcase deck, now fixed).
+- **Headers and footers that fit the motif:** a kicker label above the headline as an alternative to the boxed tag (theme `header_style="kicker"`); a curved motif's band reused, scaled down, as a footer band carrying the logos, with the page number centred on the same line (theme `footer_mid`).
+- **Co-branded lockups:** `kit.lockup()` places the divider exactly midway between the measured words. The words sit in left-aligned, word-wrapped boxes, so PowerPoint and LibreOffice previews agree (a no-wrap box is centred by LibreOffice). Checked.
+- **Logos on bookend slides** sit in exactly the same place as on content slides, or are clearly larger; never a near-miss. Checked across slides.
+- **Matched containers grow together** into free space, but only as far as the tallest one's text needs (merged with 1.1.0's "size containers to their content"). Wrapping is measured with 5% slack; text that would spill in PowerPoint is flagged.
+- **Markers:** peer markers (milestone, decision, review) share one size and differ by shape, colour or fill; "not applicable" is the same circle outlined in white, not a small grey dot. Checked.
+- **Parallel slides use one fixed layout,** sized from the slide with the most text, so the audience can flick between them.
+- **Numbers:** standalone whole numbers under ten are spelled out in running text; numerals stay for money, percentages, units, durations and data. A qualifier goes on its own line in brackets under its figure ("14 new clients" / "(nine of them from referrals)"), via `lead_points`/`side_points` with a rest starting `"\v"`. Checked.
+- **Series colours are reserved for their series:** bold or coloured text beside a chart is in the colour of the series it describes, or neutral ink. `lead_points`/`side_points` take a colour per item. Checked; fixed in three examples.
+- **Two-axis charts:** the right-hand axis title reads top-to-bottom so it faces its axis (checked); columns carry value labels by default, never rounded to whole numbers below 10, and slidekit warns if the line runs into them.
+- **Balance check** is band-aware (ignores footer bands); consistency check exempts small state markers.
+- New example: `brand-workshop.pptx`.
+
 ## 1.1.1 — November 2026
 
 - **The release zip uploads to claude.ai again.** The icons were bundled as a zip inside the skill, and claude.ai rejects a skill zip that contains another zip. They're now a plain folder of PNGs (`assets/icons/`); the SVG originals are on lucide.dev.

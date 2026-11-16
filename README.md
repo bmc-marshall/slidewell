@@ -38,7 +38,7 @@ AI-built decks usually fail in one of two ways. Slidewell is designed around pre
 
 **1. The slides look fine, but the story is wrong.** Most tools start drawing straight away. Slidewell starts with the argument: the answer first, three to five supporting points, and a headline on every slide that states the point instead of naming the topic. You approve that storyline before a single slide is built, so you never spend twenty minutes fixing the design of the wrong deck.
 
-**2. The story is fine, but the slides are full of small errors that get worse with every revision.** Misaligned boxes, three shades of nearly the same blue, a headline that leaves one word on its second line, numbers that don't add up. Slidewell builds from one theme spec, follows a written finishing standard, and runs an automated checker (63 checks), a visual review and an arithmetic check before delivery. When you ask for changes, it keeps a log of everything you've already approved and flags any change to a slide you didn't ask it to touch.
+**2. The story is fine, but the slides are full of small errors that get worse with every revision.** Misaligned boxes, three shades of nearly the same blue, a headline that leaves one word on its second line, numbers that don't add up. Slidewell builds from one theme spec, follows a written finishing standard, and runs an automated checker (73 checks), a visual review and an arithmetic check before delivery. When you ask for changes, it keeps a log of everything you've already approved and flags any change to a slide you didn't ask it to touch.
 
 Read the headlines of any Slidewell deck on their own and you get the whole argument:
 
@@ -107,7 +107,7 @@ You don't need to say "Slidewell". Claude uses it whenever you ask for a PowerPo
 
 ## Examples
 
-Ten complete decks, each with the script that built it, in [`slidewell/examples/`](slidewell/examples). Every one is rebuilt and checked automatically on each change.
+Eleven complete decks, each with the script that built it, in [`slidewell/examples/`](slidewell/examples). Every one is rebuilt and checked automatically on each change.
 
 | | Deck | Type | What to look at |
 |---|---|---|---|
@@ -119,7 +119,7 @@ Ten complete decks, each with the script that built it, in [`slidewell/examples/
 | ![](docs/images/example-workshop.png) | `volunteer-workshop.pptx` | Workshop | Objectives, tracked agenda, exercises, capture slide |
 | ![](docs/images/example-library.png) | `library-recommendation.pptx` | Recommendation | Charts with takeaways, show-the-math, pilot plan and decision bar |
 
-Also included: `purbeck-social-impact-club.pptx` (a seven-slide case for action), `fundraising-workshop.pptx` (a method revealed step by step on click), `animation-options.pptx` (three ways to reveal the same slide), and the fictional corporate template itself, `examples/templates/brackwater-template.pptx`, to try template mode with.
+Also included: `purbeck-social-impact-club.pptx` (a seven-slide case for action), `fundraising-workshop.pptx` (a method revealed step by step on click), `animation-options.pptx` (three ways to reveal the same slide), `brand-workshop.pptx` (a brand workshop in a playful, curved style, with a kicker label and a footer band carrying the logos and page number), and the fictional corporate template itself, `examples/templates/brackwater-template.pptx`, to try template mode with.
 
 ## How Slidewell compares
 
@@ -128,7 +128,7 @@ Also included: `purbeck-social-impact-club.pptx` (a seven-slide case for action)
 | Native, editable `.pptx` | ✓ | ✓ | ✓ (inside PowerPoint) | Needs conversion |
 | Storyline approved before building | ✓ | – | You prompt for it | – |
 | Works inside your corporate template | ✓ | Varies | ✓ | – |
-| Written finishing standard + automated checker | ✓ (63 checks) | Some have a linter or visual check | – | – |
+| Written finishing standard + automated checker | ✓ (73 checks) | Some have a linter or visual check | – | – |
 | Arithmetic, source and alt-text checks | ✓ | – | – | – |
 | Protects approved slides during revisions | ✓ | – | Edits in place | – |
 | Workshop decks and share versions | ✓ | – | – | – |

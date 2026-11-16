@@ -197,7 +197,7 @@ for i, (num, lab, note) in enumerate(kpis):
 s = slide(14, 0, "Appendix: we chose comparison museums by size, setting, funding",
           "Source: museum association directory, 2026 (fictional)")
 crit = [("Size", "20,000–150,000 visits a year"), ("Setting", "Coastal or small-town, outside major cities"),
-        ("Funding", "Independent trust, not local-authority run"), ("Result", "40 museums; 5 nearest used for prices and hours")]
+        ("Funding", "Independent trust, not local-authority run"), ("Result", "40 museums; five nearest used for prices and hours")]
 rh = 0.8
 top = kit.place_balanced(4 * rh)
 for i, (k_, v) in enumerate(crit):

@@ -239,7 +239,7 @@ gutter = 1.4
 colw = (CW - gutter) / 2
 list_h = max(sum(kit.text_height(kit.wrapped(p_, 16, colw - 0.35), 16, colw - 0.35) for p_ in pts) + 2 * 8 / 72 for _, pts in cols9)
 col_h = 0.6 + list_h
-q_h = 1.35
+q_h = 1.6                                    # heading + two 18pt questions + padding below
 block = col_h + 0.4 + q_h
 top = kit.place_balanced(block)
 for j, (title, pts) in enumerate(cols9):

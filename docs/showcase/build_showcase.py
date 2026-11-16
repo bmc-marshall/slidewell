@@ -150,10 +150,7 @@ for ser, col, dash in zip(ch.plots[0].series, cols3, [None, MSO_LINE_DASH_STYLE.
     ser.format.line.color.rgb = col; ser.format.line.width = Pt(3); ser.smooth = True
     if dash:
         ser.format.line.dash_style = dash
-    m_ = ser._element.find("{http://schemas.openxmlformats.org/drawingml/2006/chart}marker")
-    if m_ is None:
-        m_ = etree.SubElement(ser._element, "{http://schemas.openxmlformats.org/drawingml/2006/chart}marker")
-    etree.SubElement(m_, "{http://schemas.openxmlformats.org/drawingml/2006/chart}symbol").set("val", "none")
+    kit.no_markers(ser)
 va = ch.value_axis; va.minimum_scale = 0; va.maximum_scale = 1100; va.major_unit = 250; va.has_major_gridlines = False
 kit.axis(va, None, pt=12); kit.axis(ch.category_axis, pt=12)
 ch.category_axis.tick_labels.font.size = Pt(12)
@@ -500,10 +497,7 @@ from pptx.enum.chart import XL_LABEL_POSITION, XL_LEGEND_POSITION  # noqa: E402
 
 
 def no_markers(ser):
-    m_ = ser._element.find("{http://schemas.openxmlformats.org/drawingml/2006/chart}marker")
-    if m_ is None:
-        m_ = etree.SubElement(ser._element, "{http://schemas.openxmlformats.org/drawingml/2006/chart}marker")
-    etree.SubElement(m_, "{http://schemas.openxmlformats.org/drawingml/2006/chart}symbol").set("val", "none")
+    kit.no_markers(ser)        # python-pptx's own API; a second hand-added <c:symbol> makes PowerPoint repair the file
 
 
 def pill(s, x, y, w, h, fill, t, pt, color, bold=True):

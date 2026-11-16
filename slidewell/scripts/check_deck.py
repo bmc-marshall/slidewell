@@ -12,7 +12,13 @@ italics/underline/shadow, likely text overflow, headline length, palette,
 red/green use, near-misses in alignment and size, consistency of equivalent
 boxes, margins, recurring-element positions across slides, page numbers,
 leftover placeholders, flattened slides, chart axes/titles/types, numbers that
-probably belong in a chart, and over-precise numbers.
+probably belong in a chart, over-precise numbers, text that may spill out of
+its box in PowerPoint, mismatched marker sizes, off-centre dividers, digits under
+ten in running text, emphasis in another series' colour, axis titles turned
+away from their axis, recurring
+elements that are almost (not exactly) in place, and file integrity (hand-edited
+XML out of schema order or duplicated, which makes PowerPoint offer to repair
+the file even though renders look fine).
 
 What it can't check (do these on the rendered slides): story, hierarchy,
 balance, label-to-mark alignment, and anything needing judgement.
@@ -580,12 +586,15 @@ def check_geometry(deck, idx, infos, out):
         if len(g) < 2:
             continue
         names = ", ".join(f"'{x.name}'" for x in g[:6])
+        # small text-free markers (status dots, legend symbols) show their state by fill and outline on purpose:
+        # filled = applies, the same circle outlined = doesn't (finishing-standard §7), so don't compare those
+        state_marks = all(not x.text and max(x.w, x.h) <= 0.45 * EMU_IN for x in g)
         for attr, label in (("fill", "fill colour"), ("line", "border"), ("adj", "corner/shape adjustment")):
             vals = {getattr(x, attr) for x in g}
-            if len(vals) > 1 and attr != "fill":
+            if len(vals) > 1 and attr != "fill" and not (state_marks and attr == "line"):
                 out.append(Finding("warning", "consistency", f"Equivalent boxes differ in {label}: {names}", idx))
         fills = Counter(x.fill for x in g)
-        if len(fills) > 1 and len(g) >= 3 and fills.most_common(1)[0][1] < len(g) - 1:
+        if len(fills) > 1 and len(g) >= 3 and fills.most_common(1)[0][1] < len(g) - 1 and not state_marks:
             out.append(Finding("warning", "consistency", f"Equivalent boxes use {len(fills)} different fills: {names}. Fine only if colour carries meaning", idx))
         styles = {x.first_run_style() for x in g if x.text}
         if len(styles) > 1:
@@ -782,13 +791,20 @@ def check_balance(deck, idx, infos, roles, out):
     _, head_bottom = text_block_bounds(deck, hl)
     # no notes: distribute between the headline and the bottom of the slide
     footer = [i for i in infos if i.text and i.t > deck.H * 0.9 and i.h < int(0.45 * EMU_IN)]   # bottom tracker, page number
+    # a footer band (a motif shape running along the bottom edge that holds the logos and page number) is the
+    # bottom of the content zone when there are no notes
+    bands = [i for i in infos if not i.text and (i.fill or i.is_pic is False and i.line) and i.w >= deck.W * 0.9
+             and i.b >= deck.H - EXACT and i.t > deck.H * 0.8]
     if src:
         note_top = text_block_bounds(deck, src)[0]
+    elif bands:
+        note_top = min(i.t for i in bands)
     elif footer:
         note_top = min(text_block_bounds(deck, i)[0] for i in footer)
     else:
         note_top = deck.H
     skip = set(id(v) for v in roles.values())
+    skip |= set(id(i) for i in bands)
     content = [i for i in infos if id(i) not in skip and i.w > 0 and i.h > 0 and i.t >= head_bottom - EXACT
                and i.b <= note_top + EXACT and i.t > deck.H * 0.12
                and not (i.text and i.t > deck.H * 0.9 and i.h < int(0.45 * EMU_IN))]   # footer-zone navigation
@@ -979,6 +995,264 @@ def check_data_source(deck, idx, infos, roles, out):
         out.append(Finding("warning", "source", f"Data on this slide ('{data[0].name}') but no source or note line: say where the numbers come from (only a source named in the material; otherwise 'Source: [to be confirmed]'), or mark them illustrative", idx))
 
 
+# ----------------------------------------------------------------- containers, markers, dividers, near-misses
+def _text_extent_pt(deck, i, width_factor=1.0):
+    """(total text height in pt, top inset pt, anchor, widest line in pt) for a text box, wrapping at
+    width_factor of its width. PowerPoint sometimes wraps a word earlier than these font metrics predict, so
+    callers use width_factor < 1 to see whether the text still fits if that happens."""
+    tf = i.sh.text_frame
+    bp = tf._txBody.find("a:bodyPr", NS)
+    get = (lambda k, d: int(bp.get(k, d)) / 12700) if bp is not None else (lambda k, d: d / 12700)
+    width_pt = (i.w / 12700 - get("lIns", 91440) - get("rIns", 91440)) * width_factor
+    wrap = bp is None or bp.get("wrap", "square") != "none"
+    total, widest = 0.0, 0.0
+    for p in tf.paragraphs:
+        runs = [r for r in p.runs if r.text]
+        if not runs:
+            continue
+        size, _ = effective_size(runs[0], p, i.sh, deck)
+        fam = deck.resolve_font(runs[0].font.name) or "Arial"
+        bold = any(r.font.bold for r in runs)
+        txt = p.text.replace("\v", "\n").replace("\t", "    ")
+        ppr = p._p.find("a:pPr", NS)
+        indent = int(ppr.get("marL", 0)) / 12700 if ppr is not None else 0
+        n = wrap_lines(txt, width_pt - indent, fam, bold, size) if wrap else txt.count("\n") + 1
+        widest = max(widest, max(text_width_pt(t, fam, bold, size) for t in txt.split("\n")) + indent)
+        total += n * size * 1.2
+        sp = p._p.find("a:pPr/a:spcAft/a:spcPts", NS)
+        total += int(sp.get("val")) / 100 if sp is not None else 0
+    anchor = bp.get("anchor", "t") if bp is not None else "t"
+    return total, get("tIns", 45720), anchor, widest
+
+
+def check_container_spill(deck, idx, infos, out):
+    """Text sitting on a box (a card, a column, a pill) must end inside it with room to spare, even if
+    PowerPoint wraps a word earlier than the renderer did (finishing-standard §5, matched containers)."""
+    boxes = [c for c in infos if (c.fill or c.line) and not c.text and not c.is_pic and not c.is_line
+             and c.area_frac < 0.6 and c.w > 0.3 * EMU_IN and c.h > 0.3 * EMU_IN]
+    tol = int(0.03 * EMU_IN)
+    for i in infos:
+        if not i.text or i.fill or i.is_table or i.is_chart or i.is_pic:
+            continue
+        holders = [c for c in boxes if c.l - tol <= i.l and i.r <= c.r + tol and c.t - tol <= i.t < c.b - tol]
+        if not holders:
+            continue
+        c = min(holders, key=lambda c: c.w * c.h)
+        total, top_in, anchor, _ = _text_extent_pt(deck, i, width_factor=0.96)
+        h = int(total * 12700)
+        bottom = (i.t + int(top_in * 12700) + h if anchor == "t" else
+                  i.t + i.h // 2 + h // 2 if anchor == "ctr" else i.b)
+        if bottom > c.b - int(0.04 * EMU_IN):
+            out.append(Finding("warning", "spill",
+                               f"Text {short(i.text, 40)!r} may run past the bottom of the box it sits on if PowerPoint wraps a "
+                               f"word earlier than the render. Make the box taller (and its matching boxes too, using free space on "
+                               f"the slide) or shorten the text; don't shrink the type", idx))
+
+
+def check_marker_sizes(deck, idx, infos, out):
+    """Peer markers (legend symbols, timeline events, status dots) share one size and differ by shape, colour or
+    fill. A 'not involved' or 'not applicable' state is an empty outline of the same mark, or nothing at all."""
+    kinds = {"ellipse", "diamond", "star4", "star5", "hexagon", "flowChartConnector"}
+    marks = [i for i in infos if not i.text and i.geom in kinds and (i.fill or i.line)
+             and max(i.w, i.h) <= 0.45 * EMU_IN and min(i.w, i.h) >= 0.04 * EMU_IN and max(i.w, i.h) <= 1.3 * min(i.w, i.h)
+             and deck.H * 0.12 < i.t + i.h / 2 < deck.H * 0.88]          # tracker separators live in the top/bottom strips
+    # a ring with a dot inside (shapes sharing a centre) is one marker: keep the largest of each concentric set
+    c = lambda m: (m.l + m.w / 2, m.t + m.h / 2)
+    tol = 0.03 * EMU_IN
+    marks = [m for m in marks if not any(o is not m and max(o.w, o.h) > max(m.w, m.h)
+                                         and abs(c(o)[0] - c(m)[0]) <= tol and abs(c(o)[1] - c(m)[1]) <= tol for o in marks)]
+    if len(marks) < 3:
+        return
+    sizes = sorted({round(max(m.w, m.h) / EMU_IN, 2) for m in marks})
+    if sizes[-1] > 1.3 * sizes[0]:
+        out.append(Finding("warning", "markers",
+                           f"Markers on this slide come in {len(sizes)} sizes ({', '.join(f'{s:g}' for s in sizes)} in): make peer "
+                           "markers one size and tell them apart by shape, colour or fill (a smaller mark looks like a mistake). Show "
+                           "'not applicable' as an empty outline of the same mark, or leave it out. Ignore this if size encodes a value", idx))
+
+
+def check_divider_midway(deck, idx, infos, out):
+    """A short divider between two items (e.g. 'Client | Us' in a lockup) sits exactly midway between their
+    visible edges, measured from the text, not the text boxes."""
+    for d in infos:
+        if not (d.is_line and d.w <= int(0.02 * EMU_IN) and int(0.08 * EMU_IN) <= d.h <= int(0.7 * EMU_IN)):
+            continue
+        dmid = d.t + d.h // 2
+        near = [i for i in infos if i.text and "\n" not in i.text and abs((i.t + i.h // 2) - dmid) <= int(0.15 * EMU_IN)]
+        left = [i for i in near if i.r <= d.l + int(0.3 * EMU_IN) and i.l < d.l]
+        right = [i for i in near if i.l >= d.l - int(0.3 * EMU_IN) and i.r > d.l]
+        if not left or not right:
+            continue
+        L, R = max(left, key=lambda i: i.l), min(right, key=lambda i: i.l)
+
+        def edges(i):
+            _, _, _, wpt = _text_extent_pt(deck, i)
+            wv = int(wpt * 12700)
+            bp = i.sh.text_frame._txBody.find("a:bodyPr", NS)
+            li = int(bp.get("lIns", 91440)) if bp is not None else 91440
+            ri = int(bp.get("rIns", 91440)) if bp is not None else 91440
+            al = str(i.sh.text_frame.paragraphs[0].alignment or "")
+            if "RIGHT" in al:
+                return i.r - ri - wv, i.r - ri
+            if "CENTER" in al:
+                c = i.l + i.w // 2
+                return c - wv // 2, c + wv // 2
+            return i.l + li, i.l + li + wv
+        gl = d.l - edges(L)[1]
+        gr = edges(R)[0] - d.l
+        if 0 < gl < 0.8 * EMU_IN and 0 < gr < 0.8 * EMU_IN and abs(gl - gr) > 0.04 * EMU_IN:
+            out.append(Finding("warning", "divider",
+                               f"The divider between {short(L.text, 20)!r} and {short(R.text, 20)!r} is not midway "
+                               f"({inch(gl)} in vs {inch(gr)} in): place it from the measured text widths "
+                               "(slidekit.lockup does this)", idx))
+
+
+_SMALL_INT = re.compile(r"(?<![\w£$€#+.,/:\u2013\u2014-])([1-9])(?![\w%/\u2013\u2014-]|[.,:]\d|\s?(?:%|x\b|am\b|pm\b|k\b|m\b|bn\b|km\b|kg\b|pp\b|pts?\b|points?\b|percentage|\+|\u2011|(?:years?|yrs?|months?|mo|weeks?|wks?|days?|hours?|hrs?|minutes?|mins?)\b|of\s+\d|in\s+\d|out of))")
+_NUM_CONTEXT = re.compile(r"\b(q|phase|step|stage|option|options|figure|fig|slide|page|p|version|v|chapter|section|wave|tier|level|"
+                          r"priority|no|year|day|week|month|round|grade|key stage|ks|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|"
+                          r"oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)\.?\s*$", re.I)
+_OUT_OF = re.compile(r"\bout of\s*$", re.I)
+_MONTH_AFTER = re.compile(r"^\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)", re.I)
+_WORDS = "one two three four five six seven eight nine".split()
+
+
+def check_small_numbers(deck, idx, infos, roles, out):
+    """In running text, a standalone whole number from one to nine is spelled out ('nine of them'), while money,
+    percentages, measurements, dates, data labels and numbered things ('Phase 2', 'Q3') keep numerals."""
+    skip = {id(roles.get(k)) for k in ("page_number", "source")}
+    for i in infos:
+        if not i.text or i.is_chart or i.is_table or id(i) in skip or len(i.text.strip()) < 15:
+            continue
+        for para in i.text.replace("\v", " ").split("\n"):        # a line break is not a new sentence
+            if len(para.strip()) < 15 or len(re.findall(r"[A-Za-z]{3,}", para)) < 3:
+                continue                                  # a label, a tile or a value, not running text
+            for m in _SMALL_INT.finditer(para):
+                if _NUM_CONTEXT.search(para[:m.start()]) or _OUT_OF.search(para[:m.start()]) or _MONTH_AFTER.match(para[m.end():]):
+                    continue
+                w = _WORDS[int(m.group(1)) - 1]
+                out.append(Finding("warning", "numbers",
+                                   f"{m.group(1)!r} in {short(para, 50)!r}: spell out a standalone number under 10 in running "
+                                   f"text ({w!r}); keep numerals for money, percentages, units and data (finishing-standard §1)", idx))
+                break
+
+
+def _series(cs, theme):
+    """[(name, colour)] for the chart's series: a bar's fill or a line's stroke."""
+    out = []
+    for ser in cs.findall(".//c:ser", NS):
+        v = ser.find("c:tx//c:v", NS)
+        name = v.text if v is not None else ""
+        sp = ser.find("c:spPr", NS)
+        col = None
+        if sp is not None:
+            ln = sp.find("a:ln", NS)
+            fill = sp.find("a:solidFill", NS)
+            col = hex_of(fill, theme) if fill is not None else (hex_of(ln, theme) if ln is not None else None)
+        if col:
+            out.append((name, col))
+        cats = {p.get("idx"): (p.findtext("c:v", "", NS)) for p in ser.findall("c:cat//c:pt", NS)}
+        for d in ser.findall("c:dPt", NS):                # a highlighted point's colour belongs to that point
+            c_ = hex_of(d.find("c:spPr/a:solidFill", NS), theme)
+            ix = d.find("c:idx", NS)
+            if c_ and c_ != col:
+                out.append((name + "|" + cats.get(ix.get("val") if ix is not None else "", ""), c_))
+    return out
+
+
+def check_series_colour_emphasis(deck, idx, infos, roles, out):
+    """On a slide with a chart, a series' colour means that series. Bold or coloured emphasis in a series colour
+    must be about that series; emphasis about anything else uses neutral ink or that thing's own colour."""
+    charts = [i for i in infos if i.is_chart]
+    series = [sc for i in charts for sc in _series(i.sh.chart._chartSpace, deck.theme_colors)]
+    if len({n.split("|")[0] for n, _ in series}) < 2 or len({c for _, c in series}) < 2:
+        return                                            # colour isn't telling series apart (a single series, even
+                                                          # with a highlighted bar, follows the accent rule instead)
+    by_col = {}
+    for name, col in series:
+        if not is_neutral(col):
+            by_col.setdefault(col, []).append(name)
+    skip = {id(roles.get(k)) for k in ("headline", "breadcrumb", "page_number", "source")}
+    near = int(0.5 * EMU_IN)
+    for i in infos:
+        if not i.text or i.is_chart or id(i) in skip:
+            continue
+        if not any(i.t < c.b + near and i.b > c.t - near for c in charts):
+            continue                                      # header/footer furniture, not commentary
+        if " " not in i.text.strip() and not any(ch.isdigit() for ch in i.text):
+            continue                                      # a one-word wordmark or label
+        if any(i.b <= c.t + int(0.1 * EMU_IN) and c.t - i.b < int(0.6 * EMU_IN) and i.l < c.r and i.r > c.l
+               and "\n" not in i.text and len(i.text) < 60 for c in charts):
+            continue                                      # the chart's own title
+        runs_ = [r for p_ in i.sh.text_frame.paragraphs for r in p_.runs if r.text.strip()]
+        if runs_ and all(r.font.bold for r in runs_) and ":" not in i.text and len(i.text) <= 80 and "\n" not in i.text.strip():
+            continue                                      # a heading (chart or panel title), not emphasis in a sentence
+        for p in i.sh.text_frame.paragraphs:
+            ptxt = p.text.lower()
+            for r in p.runs:
+                rp = r._r.find("a:rPr", NS)
+                sf = rp.find("a:solidFill", NS) if rp is not None else None
+                col = hex_of(sf, deck.theme_colors) if sf is not None else None
+                if not r.text.strip() or col not in by_col or not r.font.bold:
+                    continue
+                names = by_col[col]
+                keys = [re.sub(r"\s*\(.*?\)", "", k).strip().lower() for n in names for k in n.split("|")]
+                if any(k and k.split()[0] in ptxt for k in keys):
+                    continue
+                out.append(Finding("warning", "series-colour",
+                                   f"Bold {short(r.text.strip(), 30)!r} is in the chart's colour for {names[0].replace('|', ', ')!r} but is about "
+                                   "something else: readers will match it to that series. Use neutral ink, or the colour "
+                                   "of the series it does describe (charts.md)", idx))
+                break
+
+
+def check_axis_title_facing(deck, idx, infos, out):
+    """Each value-axis title is turned so the bottom of its letters faces its own axis: a left-hand title reads
+    bottom-to-top (rot -90), a right-hand one top-to-bottom (rot +90)."""
+    for i in infos:
+        if not i.is_chart:
+            continue
+        for ax in i.sh.chart._chartSpace.findall(".//c:valAx", NS):
+            pos, t = ax.find("c:axPos", NS), ax.find("c:title", NS)
+            dl = ax.find("c:delete", NS)
+            if pos is None or t is None or pos.get("val") not in ("l", "r") or (dl is not None and dl.get("val") in ("1", "true")):
+                continue
+            bp = t.find(".//a:bodyPr", NS)
+            rot = int(bp.get("rot", "-5400000")) if bp is not None else -5400000
+            if pos.get("val") == "r" and rot != 5400000:
+                out.append(Finding("warning", "charts", f"The right-hand axis title in '{i.name}' faces away from its axis: "
+                                   "rotate it to read top-to-bottom (bodyPr rot=5400000; slidekit.combo_chart does this)", idx))
+            if pos.get("val") == "l" and rot == 5400000:
+                out.append(Finding("warning", "charts", f"The left-hand axis title in '{i.name}' faces away from its axis: "
+                                   "it should read bottom-to-top", idx))
+
+
+def check_near_misses(deck, slides, wanted, out):
+    """A recurring short text (a logo wordmark, a footer label) that sits almost, but not exactly, where it sits on
+    the other slides looks like a mistake. Put it in exactly the same place, or make the difference deliberate."""
+    seen = {}
+    for idx, sl in enumerate(slides, 1):
+        for sh, box in iter_shapes(sl.shapes):
+            if getattr(sh, "has_text_frame", False) and sh.has_text_frame:
+                t = sh.text_frame.text.strip()
+                if 2 <= len(t) <= 40 and not t.isdigit():
+                    seen.setdefault(t, []).append((idx, box[0], box[1]))
+    lo, hi = int(0.03 * EMU_IN), int(0.6 * EMU_IN)
+    for t, occ in seen.items():
+        if len({o[0] for o in occ}) < 3:
+            continue
+        ml = Counter(o[1] for o in occ).most_common(1)[0][0]
+        mt = Counter(o[2] for o in occ).most_common(1)[0][0]
+        for idx, l, tp in occ:
+            if idx not in wanted:
+                continue
+            dl, dt = abs(l - ml), abs(tp - mt)
+            if (lo < dl <= hi and dt <= hi) or (lo < dt <= hi and dl <= hi):
+                out.append(Finding("warning", "near-miss",
+                                   f"{short(t, 30)!r} sits {inch(max(dl, dt))} in away from where it is on most slides: put a "
+                                   "recurring element in exactly the same place, or make the difference obvious and deliberate "
+                                   "(e.g. a clearly larger lockup on the title slide)", idx))
+
+
 def check_slide(deck, idx, slide, out, deck_colors, n_slides):
     infos = [ShapeInfo(sh, box, deck) for sh, box in iter_shapes(slide.shapes)]
     # leftover placeholders
@@ -1006,9 +1280,15 @@ def check_slide(deck, idx, slide, out, deck_colors, n_slides):
     check_text_on_images(deck, idx, slide, out)
     check_page_number_low(deck, idx, infos, roles, out)
     check_bullets(deck, idx, infos, out)
+    check_container_spill(deck, idx, infos, out)
+    check_marker_sizes(deck, idx, infos, out)
+    check_divider_midway(deck, idx, infos, out)
     check_accessibility(deck, idx, infos, out)
     check_data_source(deck, idx, infos, roles, out)
     has_chart = check_charts(deck, idx, infos, out)
+    check_axis_title_facing(deck, idx, infos, out)
+    check_series_colour_emphasis(deck, idx, infos, roles, out)
+    check_small_numbers(deck, idx, infos, roles, out)
     if numeric >= 4 and not has_chart and not any(i.is_pic for i in infos):
         out.append(Finding("warning", "chart-vs-text", f"{numeric} numbers in text and no chart or table: if 2+ of them are being compared, show them as a chart (charts.md §1)", idx))
     bleed = any(i.is_bleed for i in infos)
@@ -1501,6 +1781,101 @@ def check_positions(deck, slides, wanted, out):
     spread(bars, 2, "Full-width decision/discussion bars")
 
 
+# ----------------------------------------------------------------- file integrity
+# PowerPoint refuses XML that is out of schema order or repeats an element that may appear once, and offers to
+# "repair" the file; LibreOffice (and so render.py) shows the same file without complaint. These rules cover the
+# elements build scripts most often edit by hand. Each entry: element -> ordered slots; a slot is a set of
+# alternative child names; names ending in "*" may repeat. Children not listed are ignored (no false alarms).
+def _slots(*groups):
+    return [set(g.split("|")) for g in groups]
+
+
+_SER_LINE = _slots("idx", "order", "tx", "spPr", "marker", "dPt*", "dLbls", "trendline*", "errBars", "cat", "val", "smooth", "extLst")
+_SER_BAR = _slots("idx", "order", "tx", "spPr", "invertIfNegative", "pictureOptions", "dPt*", "dLbls", "trendline*",
+                  "errBars", "cat", "val", "shape", "extLst")
+_SER_SCATTER = _slots("idx", "order", "tx", "spPr", "marker", "dPt*", "dLbls", "trendline*", "errBars*", "xVal", "yVal",
+                      "smooth", "extLst")
+_SER_PIE = _slots("idx", "order", "tx", "spPr", "explosion", "dPt*", "dLbls", "cat", "val", "extLst")
+_SER_AREA = _slots("idx", "order", "tx", "spPr", "pictureOptions", "dPt*", "dLbls", "trendline*", "errBars*", "cat", "val", "extLst")
+_SPPR = _slots("xfrm", "custGeom|prstGeom", "noFill|solidFill|gradFill|blipFill|pattFill|grpFill", "ln",
+               "effectLst|effectDag", "scene3d", "sp3d", "extLst")
+_ORDER_RULES = {
+    "c:marker": _slots("symbol", "size", "spPr", "extLst"),
+    "c:chartSpace": _slots("date1904", "lang", "roundedCorners", "AlternateContent", "clrMapOvr", "pivotSource",
+                           "protection", "chart", "spPr", "txPr", "externalData", "printSettings", "userShapes", "extLst"),
+    "c:spPr": _SPPR, "p:spPr": _SPPR, "a:spPr": _SPPR,
+    "a:ln": _slots("noFill|solidFill|gradFill|pattFill", "prstDash|custDash", "round|bevel|miter", "headEnd", "tailEnd", "extLst"),
+    "a:pPr": _slots("lnSpc", "spcBef", "spcAft", "buClrTx|buClr", "buSzTx|buSzPct|buSzPts", "buFontTx|buFont",
+                    "buNone|buAutoNum|buChar|buBlip", "tabLst", "defRPr", "extLst"),
+    "a:rPr": _slots("ln", "noFill|solidFill|gradFill|blipFill|pattFill|grpFill", "effectLst|effectDag", "highlight",
+                    "uLnTx|uLn", "uFillTx|uFill", "latin", "ea", "cs", "sym", "hlinkClick", "hlinkMouseOver", "rtl", "extLst"),
+    "a:bodyPr": _slots("prstTxWarp", "noAutofit|normAutofit|spAutoFit", "scene3d", "sp3d", "flatTx", "extLst"),
+    "p:sld": _slots("cSld", "clrMapOvr", "transition", "timing", "extLst"),
+}
+_SER_BY_PARENT = {"lineChart": _SER_LINE, "line3DChart": _SER_LINE, "radarChart": _SER_LINE, "barChart": _SER_BAR,
+                  "bar3DChart": _SER_BAR, "scatterChart": _SER_SCATTER, "pieChart": _SER_PIE, "pie3DChart": _SER_PIE,
+                  "doughnutChart": _SER_PIE, "ofPieChart": _SER_PIE, "areaChart": _SER_AREA, "area3DChart": _SER_AREA}
+
+
+def _xml_order_problems(root):
+    """Yield one message per element whose children are out of schema order or repeat a once-only child."""
+    rev = {v: k for k, v in NS.items()}
+    def qn(el):
+        q = etree.QName(el)
+        return rev.get(q.namespace, "?"), q.localname
+    for el in root.iter():
+        if not isinstance(el.tag, str):
+            continue
+        pfx, name = qn(el)
+        if pfx == "c" and name == "ser":
+            parent = el.getparent()
+            rules = _SER_BY_PARENT.get(qn(parent)[1]) if parent is not None else None
+        else:
+            rules = _ORDER_RULES.get(f"{pfx}:{name}")
+        if not rules:
+            continue
+        last, seen = -1, Counter()
+        for ch in el:
+            if not isinstance(ch.tag, str):
+                continue
+            cname = qn(ch)[1]
+            pos = next((i for i, s in enumerate(rules) if cname in s or cname + "*" in s), None)
+            if pos is None:
+                continue
+            repeatable = any(n.endswith("*") for n in rules[pos])
+            seen[pos] += 1
+            if seen[pos] > 1 and not repeatable:
+                alts = sorted(rules[pos])
+                yield (f"<{pfx}:{name}> has more than one <{cname}>" if len(alts) == 1 else
+                       f"<{pfx}:{name}> has more than one of <{'>/<'.join(alts)}> (only one is allowed)")
+                break
+            if pos < last:
+                yield f"<{pfx}:{name}>: <{cname}> is out of schema order (it must come earlier)"
+                break
+            last = pos
+
+
+def check_integrity(path, deck, out):
+    """File-level defects that make PowerPoint ask to repair the deck (renders won't show them)."""
+    import zipfile
+    names = zipfile.ZipFile(path).namelist()
+    dups = sorted({n for n in names if names.count(n) > 1})
+    if dups:
+        out.append(Finding("error", "file-integrity", f"The .pptx has duplicate entries ({', '.join(dups[:4])}): it was "
+                           "modified by appending to the zip. Rebuild it with python-pptx instead"))
+    fix = (" PowerPoint will refuse it and offer to repair the file (LibreOffice renders it fine, so renders won't show "
+           "this). Use python-pptx's API for it (e.g. kit.no_markers(series) for lines without markers), or insert "
+           "raw XML in schema order and replace an existing child rather than adding a second")
+    for idx, slide in enumerate(deck.prs.slides, 1):
+        parts = [("slide", slide.part)] + [("chart", rel.target_part) for rel in slide.part.rels.values()
+                                            if rel.reltype == RT.CHART and not rel.is_external]
+        for kind, part in parts:
+            msgs = list(dict.fromkeys(_xml_order_problems(etree.fromstring(part.blob))))
+            for m in msgs[:3]:
+                where = "" if kind == "slide" else f" in chart {str(part.partname).rsplit('/', 1)[-1]}"
+                out.append(Finding("error", "file-integrity", f"Invalid XML{where}: {m}." + fix, idx))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("pptx")
@@ -1536,6 +1911,8 @@ def main():
     check_corners(deck, slides, wanted, findings)
     check_fill_text_pairs(deck, slides, wanted, findings)
     check_transitions(deck, slides, wanted, findings)
+    check_integrity(args.pptx, deck, findings)
+    check_near_misses(deck, slides, wanted, findings)
 
     fams = [f for f in deck_fonts if f and f != "(theme default)"]
     allowed = theme.get("fonts")

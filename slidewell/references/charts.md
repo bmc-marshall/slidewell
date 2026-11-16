@@ -94,7 +94,7 @@ Prefer native, editable charts (python-pptx `chart_data` + `add_chart`):
 |---|---|
 | Bar, column, clustered, stacked, 100% stacked | Native (`BAR_CLUSTERED`, `COLUMN_STACKED`, `BAR_STACKED_100`, …) |
 | Line, slope, scenario lines | Native `LINE`; slope = two categories |
-| Column + line on two axes | `kit.combo_chart()`: native columns plus a line bound to a visible right-hand axis. Both axes keep their tick labels and a units title, each coloured to match its series. Never delete the secondary axis: LibreOffice then plots the line on the primary scale |
+| Column + line on two axes | `kit.combo_chart()`: native columns plus a line bound to a visible right-hand axis. Both axes keep their tick labels and a units title, each coloured to match its series and facing its axis. The columns carry value labels (reading a column against a scale on the far side of the chart is hard), so scale the axes until the line clears the labels as well as the columns; slidekit warns when it doesn't. Never delete the secondary axis: LibreOffice then plots the line on the primary scale |
 | Scatter, bubble | Native `XY_SCATTER`, `BUBBLE` |
 | Waterfall | Native **stacked column** with an invisible (no-fill) base series; or shapes |
 | Histogram | Native column with gap width 0–5% |
@@ -172,7 +172,7 @@ When you build a chart from shapes, compute positions from one scale function so
 
 **Marks**
 - Bars wider than the gaps between them (gap ≈ 50–80% of bar width), consistent across the deck. **Bars start exactly on the axis baseline**, with no gap underneath, and nothing is drawn over the axis line. A bar floating above the axis looks like a chart error.
-- Lines about 2 pt, no markers except a dot on labeled points; the focal line slightly thicker.
+- Lines about 2 pt, no markers except a dot on labeled points; the focal line slightly thicker. Remove markers with `kit.no_markers(series)`, never by adding `<c:marker>`/`<c:symbol>` XML by hand: a line series already has a marker element, and a duplicate makes PowerPoint refuse the file.
 
 **Multiple charts**
 - At most two charts per slide, except special cases (maps, report screenshots, small multiples). Charts of the same measure share scale, size, and alignment.
@@ -190,12 +190,14 @@ When you build a chart from shapes, compute positions from one scale function so
 - **Label space:** reserve room for category, tick, and data labels. Labels never overlap bars, axes, gridlines, or each other, and never intrude into the plot area. If they spill, reduce label size (≥10 pt), wrap deliberately, widen the label area, or abbreviate clearly.
 - **Title clearance:** clear space between the chart title/subtitle and the plot, so the title doesn't crowd the first bar, gridline, label, or axis (about 0.25–0.35 in; finishing-standard §5).
 - **Axis proximity:** tick labels and axis titles close enough to their axis that the relationship is obvious, without touching.
+- **Axis titles face their axis.** Rotate a vertical axis title so the bottom of its letters faces the axis it names: a left-hand title reads bottom-to-top (PowerPoint's default), a right-hand title reads top-to-bottom (rotated 90° clockwise). *Why:* a title whose back is turned to its axis looks as if it belongs to the plot or the other axis. `kit.combo_chart` does this. *(Checked.)*
 - **Bars** sit exactly on the axis baseline: no gap beneath them, and nothing overlapping the axis line.
 - **Native first:** build charts as native, editable PowerPoint charts wherever practical. If a visual can't reasonably be rebuilt, place it as an image and keep its title, annotations, and source native.
 
 **Finishing details** *(from the author's reviews of built decks)*
 - **Line labels sit on their lines.** A label at the end of a line (or a reference line) has its text box vertically centred on the line's y-position and its text vertically centred in the box, so the label reads as part of the line.
 - **Reference lines span the plot:** capacity, target, and threshold lines run from the value axis to the end of the plot, so they don't suddenly appear partway along. If a level only applies to part of the range, say so in the label ("Evening capacity").
+- **Text in a series colour talks about that series.** Bold lead-ins and highlighted words beside a chart use the colour of the series they describe, or neutral ink; never another series' colour, even when it is the main brand colour (finishing-standard §3). *(Checked.)*
 - **Place annotations where they don't clutter:** usually in empty space next to or beneath what they describe, not across the data. An annotation's text uses a colour that doesn't match any data series (usually near-black). *Why:* an annotation in the same colour as a line reads as part of that series.
 - **Scatter labels: choose a side for each point, then check for collisions.** Default to the right of the point; put a label on the left, above, or below when its neighbour, the zone label, or the plot edge is in the way. After rendering, check that no label touches another label or point. Use word-wrapped label boxes wide enough for one line, not no-wrap boxes: some renderers re-centre no-wrap boxes, so their labels drift away from their points.
 - **Zone labels belong to their zone.** Put the label for a shaded zone ("Target zone") *inside* the zone, in its emptiest corner (often top-right), a size smaller than the data labels, in the same case style as other labels (title or sentence case, or all caps if that's the deck's label style). Only if there's no empty corner, place it just outside, touching the edge. *Why:* a label floating near a box doesn't clearly belong to it.

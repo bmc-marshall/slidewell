@@ -12,7 +12,7 @@ gh repo create slidewell --public --source . --push
 ## 2. Description, website and topics
 
 ```bash
-gh repo edit --description "Consulting-grade PowerPoint decks with Claude: agree the storyline headline by headline, then build a native, editable .pptx in your brand or template and check every slide before delivery. For recommendations, options appraisals, board papers, proposals and workshops. Includes a 63-check deck checker and 10 example decks."
+gh repo edit --description "Consulting-grade PowerPoint decks with Claude: agree the storyline headline by headline, then build a native, editable .pptx in your brand or template and check every slide before delivery. For recommendations, options appraisals, board papers, proposals and workshops. Includes a 73-check deck checker and 11 example decks."
 
 gh repo edit \
   --add-topic claude-skill --add-topic claude-skills --add-topic agent-skills --add-topic claude-code \

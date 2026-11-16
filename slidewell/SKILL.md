@@ -25,13 +25,13 @@ Slidewell builds decks the way a strong strategy consultant does: **story first,
 | `scripts/render.py` | Every visual QA pass: slide images + a contact sheet of the whole deck |
 | `scripts/compare_versions.py` | After every revision: lists every change, flags changes on slides you weren't asked to touch |
 | `scripts/slidekit.py` | When building: helpers that apply the finishing standard automatically (wrapping, bullets, distribution, fixed positions, corners, labels, animation). Read its docstring first |
-| `examples/` | When you want a concrete reference: ten fictional decks (pitch, case for action, findings and recommendations, proposal, a steering-group update built inside a corporate template, two workshops, animation options, and more) with the build scripts that made them; the README lists what each shows |
+| `examples/` | When you want a concrete reference: eleven fictional decks (pitch, case for action, findings and recommendations, proposal, a steering-group update built inside a corporate template, two workshops, a decision workshop comparing two concepts on identical slides, animation options, and more) with the build scripts that made them; the README lists what each shows |
 
 ### If these files aren't there
 Some hosts load only this SKILL.md, without the folders beside it. **Before step 1, check that `references/` and `scripts/` exist next to this file.** If they don't, get them before doing anything else, because the rest of this skill depends on them:
 
 1. **Fetch the matching release** into a scratch folder, and use its `slidewell/` folder as the base directory for every path in the table above:
-   `git clone --depth 1 --branch v1.1.1 https://github.com/bmc-marshall/slidewell <scratch>/slidewell-src`
+   `git clone --depth 1 --branch v1.2.0 https://github.com/bmc-marshall/slidewell <scratch>/slidewell-src`
    Then install the requirements if python-pptx is missing: `pip install -r <scratch>/slidewell-src/slidewell/requirements.txt`. Don't mention this step to the user unless it fails.
 2. **If the clone fails** (no network, or GitHub blocked), ask the user to attach the slidewell .zip, unzip it into its own scratch folder, and use that.
 3. **If neither works**, tell the user in one line that the references and checker aren't available in this session, and follow this file alone. Stand in for the scripts by hand: render with `soffice --headless --convert-to pdf` then `pdftoppm -png` and look at every changed slide; check revisions by listing each slide's shapes (name, position, size, text) before and after and confirming only the intended slides changed. Say in the QA report that `check_deck.py` did not run. Never say a deck passed the checker when it didn't.
@@ -112,6 +112,8 @@ The spec must include: slide size (16:9 default), outer margins, the headline ba
 Say it in one line ("16 slides, about 10–20 minutes including checks; medium confidence"). If you report how long a build took, measure it (timestamps in the log, or the clock), never estimate it after the fact. If the build runs past the top of the range, say why and how much is left.
 
 Build native, editable .pptx with python-pptx (`pip install python-pptx` if missing; if a pptx skill is available, its guidance on mechanics applies too). Follow `references/finishing-standard.md` §11 (editability) throughout.
+
+**The file must open cleanly in PowerPoint.** Use python-pptx's API (or a slidekit helper) for anything it supports. When you must edit XML directly, insert each element in schema order and replace an existing child rather than adding a second one. PowerPoint refuses out-of-order or duplicated elements and offers to "repair" the deck, which is the worst possible first impression. LibreOffice renders the same file without complaint, so the renders won't show the problem; `check_deck.py` reports these as `file-integrity` errors. Don't copy raw-XML snippets from old build scripts without checking what python-pptx already wrote.
 
 - Choose each slide's pattern from `references/layout-patterns.md` by the job the slide does. Respect the content-density benchmark (§H).
 - Write headlines exactly as approved; if building reveals that a headline can't be supported, flag it rather than quietly changing it.

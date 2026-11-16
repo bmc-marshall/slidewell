@@ -215,3 +215,56 @@ def test_icons_load_from_folder(tmp_path):
     assert len(names) == 114 and "leaf" in names
     kit = Kit(); s = kit.new_slide()
     assert kit.icon(s, "leaf", 1, 1, 0.6).name == "Icon leaf"
+
+
+def test_combo_chart_title_faces_axis_and_columns_labelled(tmp_path):
+    """v1.2.0: the right-hand axis title reads top-to-bottom (faces its axis) and the columns carry value labels."""
+    from slidekit import Kit
+    kit = Kit()
+    s = kit.new_slide()
+    kit.frame(s, 1, None, "Revenue has grown every year, but margin has slipped", "Source: test data")
+    gf = kit.combo_chart(s, 0.6, 2.0, 8, 4.2, ["2022", "2023", "2024"], [("Revenue (£M)", (3.1, 3.4, 3.9))],
+                         ("Margin", (0.21, 0.19, 0.17)), "Revenue (£M)", "Margin", bar_max=8, line_min=-0.25, line_max=0.25)
+    C_ = "{http://schemas.openxmlformats.org/drawingml/2006/chart}"
+    A_ = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
+    right = [v for v in gf.chart._chartSpace.iter(f"{C_}valAx") if v.find(f"{C_}axPos").get("val") == "r"][0]
+    assert right.find(f".//{C_}title//{A_}bodyPr").get("rot") == "5400000"
+    assert gf.chart.plots[0].has_data_labels and gf.chart.plots[0].data_labels.number_format == "#,##0.0"
+    out = tmp_path / "combo.pptx"; kit.save(str(out))
+    assert not [f for f in check(out) if "faces away" in f["message"]]
+
+
+def test_checker_numbers_series_colour_and_divider(tmp_path):
+    """v1.2.0 checks: a digit under ten in running text, bold text in another series' colour, an off-centre divider."""
+    from slidekit import Kit, rgb
+    kit = Kit()
+    s = kit.new_slide()
+    kit.frame(s, 1, None, "Referrals have grown faster than income since 2022", "Source: test data")
+    cd = CategoryChartData(); cd.categories = ["2022", "2023", "2024"]
+    cd.add_series("Referrals", (100, 130, 165)); cd.add_series("Income", (100, 110, 124))
+    ch = s.shapes.add_chart(XL_CHART_TYPE.LINE, Inches(0.6), Inches(2), Inches(7), Inches(4), cd).chart
+    for ser, col in zip(ch.plots[0].series, ("E8664A", "0E5E6F")):
+        ser.format.line.color.rgb = rgb(col); kit.no_markers(ser)
+    kit.side_points(s, 8.2, 4.5, 2.1, 5.9, [("Referrals up 65%", "since 2022, 9 of them from schools", rgb("0E5E6F")),
+                                             ("Income up 24%", "over the same period", rgb("0E5E6F"))], 16)
+    kit.text(s, 0.6, 6.9, 1.2, 0.3, "Tidewater", 13, bold=True, smart=False)
+    kit.line(s, 2.0, 6.95, 2.0, 7.15)
+    kit.text(s, 2.05, 6.9, 1.2, 0.3, "Northlight", 13, bold=True, smart=False)
+    out = tmp_path / "faults.pptx"; kit.save(str(out))
+    rules = [f["rule"] for f in check(out)]
+    assert "numbers" in rules and "series-colour" in rules and "divider" in rules
+    msgs = [f["message"] for f in check(out) if f["rule"] == "series-colour"]
+    assert len(msgs) == 1 and "Referrals up 65%" in msgs[0]          # the Income lead-in is in Income's colour: fine
+
+
+def test_lockup_divider_is_midway(tmp_path):
+    """kit.lockup places the divider midway between the measured words, in left-aligned wrapping boxes."""
+    from slidekit import Kit
+    kit = Kit()
+    s = kit.new_slide()
+    kit.frame(s, 1, None, "A slide with a co-branded footer lockup", None)
+    kit.lockup(s, 0.6, 7.0, [("Tidewater", 13, True, kit.T["main"], None), ("Northlight", 13, True, kit.T["ink"], None)])
+    boxes = [sh for sh in s.shapes if sh.has_text_frame and sh.text_frame.text in ("Tidewater", "Northlight")]
+    assert all(sh.text_frame.word_wrap for sh in boxes)
+    out = tmp_path / "lockup.pptx"; kit.save(str(out))
+    assert not [f for f in check(out) if f["rule"] == "divider"]

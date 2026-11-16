@@ -210,9 +210,9 @@ def chart7(cy, chh):
 
 
 chart_with_panel(s, 8.6, "Visitors per hour vs evening staff capacity, average weekday", "Today vs new", [
-    ("Today:", "from 4pm, demand outruns staff by up to 68 visitors an hour"),
-    ("New:", "capacity covers every hour, including the 6pm peak of 178"),
-    ("Daytime:", "demand stays below capacity under both rotas, so only evenings are shown")], chart7, panel_pt=16)
+    ("Today:", "from 4pm, demand outruns staff by up to 68 visitors an hour", T["ink"]),      # series colours are reserved:
+    ("New:", "capacity covers every hour, including the 6pm peak of 178", T["main"]),     # only "New" uses New capacity's
+    ("Daytime:", "demand stays below capacity under both rotas, so only evenings are shown", T["ink"])], chart7, panel_pt=16)
 
 # ---------------------------------------------------------------- 8 show the math
 s = content_slide(8, "Cost and impact", "That change is cost-neutral and lets staff support ~20% more visitors",

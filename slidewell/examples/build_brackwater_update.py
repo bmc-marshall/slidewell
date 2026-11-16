@@ -103,9 +103,10 @@ kit.alt(gf, "Column chart of planned versus renewed kilometres of mains by quart
             "Q2 60 and 58, Q3 50 and 32. The programme is 18 km behind plan, all of it in Q3.")
 sx = M + cw + 0.5
 kit.side_points(s, sx, W - M - sx, TOP + 0.55 + PY * ch_h, TOP + 0.55 + (PY + PH) * ch_h, [
-    ("Q1–Q2: ", "ahead of plan in Q1 and 2 km behind in Q2"),
-    ("Q3: ", "18 km short, because Eastfield's contractor started four weeks late"),
-    ("Elsewhere: ", "the other three areas are on plan")], pt=16, lead_color=MAIN)
+    # a series colour is reserved for its series: Q3 in the colour of the Q3 bar it explains, the others in ink
+    ("Q1–Q2: ", "ahead of plan in Q1 and 2 km behind in Q2", INK),
+    ("Q3: ", "18 km short, because Eastfield's contractor started four weeks late", ACCENT),
+    ("Elsewhere: ", "the other three areas are on plan", INK)], pt=16)
 
 # 4 ---- budget table
 s = content(4, "Spend is £3.1M below plan, but £2.4M of that is timing, not savings",

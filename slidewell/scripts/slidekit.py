@@ -1182,6 +1182,20 @@ class Kit:
         return self.text(slide, x, y, w, 0.45, s, pt, self.T["main"], bold=True, align=align)
 
     # ------------------------------------------------------------------ finish
+    def notes(self, slide, headline, orientation=None, points=(), transition=None):
+        """Speaker notes in four parts (SKILL.md, Build: speaker notes): the headline to say first, how to read the
+        slide (optional), two or three key points, and the line into the next slide. Replaces any existing notes."""
+        parts = [f"HEADLINE: {headline}"]
+        if orientation:
+            parts.append(f"ORIENTATION: {orientation}")
+        if points:
+            parts.append("KEY POINTS:\n" + "\n".join(f"- {p}" for p in points))
+        if transition:
+            parts.append(f"TRANSITION: {transition}")
+        tf = slide.notes_slide.notes_text_frame
+        tf.text = "\n\n".join(parts)
+        return tf
+
     def alt(self, shape, text):
         """Set alt text on any shape; a chart's alt text should say what the chart shows and its main finding."""
         return set_alt(shape, text)

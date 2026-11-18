@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.0 — November 2026
+
+From a management-communication course's audience-strategy template and presentation feedback form.
+
+- **Audience by person:** intake asks who decides, who else will be in the room or read the deck, and what each needs, plus everything the audience should agree, not only the decision.
+- **Audience strategy in the storyline proposal:** who decides and who else is there, the ask, how hard it will be to accept and why, and how to convince them: credibility, their priorities, logic, and what's in it for them for each main point.
+- **Back-up slides:** for the assumptions most likely to be challenged, prepare appendix slides (a sensitivity, an alternative, the method).
+- **Speaker notes (optional, for presented decks):** headline, orientation, key points and transition for each slide. Intake asks; new `kit.notes()`.
+
 ## 1.4.0 — November 2026
 
 From a real revision (three slides added to a client deck from a hand-drawn sketch), the author's corrections to it, and three blind tests (one run each of two and then four versions, then three runs each of v1.2.0 and v1.4.0). Folds in the unreleased 1.3.0 changes.

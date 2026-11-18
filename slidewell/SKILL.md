@@ -31,7 +31,7 @@ Slidewell builds decks the way a strong strategy consultant does: **story first,
 Some hosts load only this SKILL.md, without the folders beside it. **Before step 1, check that `references/` and `scripts/` exist next to this file.** If they don't, get them before doing anything else, because the rest of this skill depends on them:
 
 1. **Fetch the matching release** into a scratch folder, and use its `slidewell/` folder as the base directory for every path in the table above:
-   `git clone --depth 1 --branch v1.4.0 https://github.com/bmc-marshall/slidewell <scratch>/slidewell-src`
+   `git clone --depth 1 --branch v1.5.0 https://github.com/bmc-marshall/slidewell <scratch>/slidewell-src`
    Then install the requirements if python-pptx is missing: `pip install -r <scratch>/slidewell-src/slidewell/requirements.txt`. Don't mention this step to the user unless it fails.
 2. **If the clone fails** (no network, or GitHub blocked), ask the user to attach the slidewell .zip, unzip it into its own scratch folder, and use that.
 3. **If neither works**, tell the user in one line that the references and checker aren't available in this session, and follow this file alone. Stand in for the scripts by hand: render with `soffice --headless --convert-to pdf` then `pdftoppm -png` and look at every changed slide; check revisions by listing each slide's shapes (name, position, size, text) before and after and confirming only the intended slides changed. Say in the QA report that `check_deck.py` did not run. Never say a deck passed the checker when it didn't.
@@ -133,6 +133,7 @@ Build native, editable .pptx with python-pptx (`pip install python-pptx` if miss
 - Numbers: for every slide with two or more values being compared, use a chart, not text (`references/charts.md` §1). Choose and build it per `references/charts.md`; annotations stay native and editable.
 - Workshop decks: every interaction slide makes clear what the room should do.
 - Reveals: follow the animation answer from intake (visual-identity §6). Not animated → builds as successive slides (n/N). Animated → fade in on click; dim earlier items only when the newest item supersedes them.
+- **Speaker notes (presented decks, if the user wants them; intake asks):** for each slide write notes in four parts. *Headline:* the sentence to say first. *Orientation:* how to read the slide, where that helps ("All I want you to know is…"; what the colours or axes mean). *Key points:* two or three talking points that support the headline, not a script. *Transition:* the line that leads into the next slide. Use `kit.notes(slide, headline, orientation, points, transition)`. *Why:* the audience hears the point before they read the evidence, and each slide hands over to the next.
 - Mark the status of content honestly: "Illustrative", "[DUMMY DATA]", "WIP", assumptions slides.
 - For long decks, build section by section and run QA as you go.
 

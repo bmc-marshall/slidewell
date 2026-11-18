@@ -124,7 +124,7 @@ Run this on every storyline before sending it to the user (and again on the buil
 3. **Check that each headline answers the question the previous one raises** (why? so what? how? who? what would it take? what about the risk?). If a headline answers a question nobody asked yet, it's in the wrong place.
 4. **Check the joins between sections** as carefully as within them: the last headline of one section should set up the first of the next.
 5. **Look for the SCQA arc** at deck level and, where it helps, inside sections (as in Example A, slides 2–5).
-6. **Anticipate objections:** where would this audience push back? Put the answer at that point in the sequence.
+6. **Anticipate objections:** where would this audience push back? Put the answer at that point in the sequence. For the assumptions most likely to be challenged, prepare back-up slides in the appendix (a sensitivity, an alternative, the method), so a challenge in the room has an answer ready without cluttering the main story.
 7. **Make links explicit only where they help.** Connectors ("However", "As a result", "At the same time") are useful at turning points; you don't need one on every headline.
 
 **Techniques visible across these decks**
@@ -215,6 +215,18 @@ Workshop-specific headline rules:
 Send this in the conversation (not as a deck) at the storyline gate.
 
 ```
+AUDIENCE STRATEGY
+Decides: <name/role> | position | what they need to see
+Also there: <names/roles> | position | what each needs
+The ask: <the decision> + <anything else to agree>
+How hard to accept, and why: <easy / mixed / hard: the reason>
+How we'll convince them:
+  credibility: <what shows rigour: sources, method, appendix>
+  their priorities: <their language and concerns; trade-offs acknowledged>
+  logic: <the structure of the argument>
+  in it for them: <for each main point, why this audience should care>
+Back-ups: <assumptions most likely to be challenged → appendix slides ready for each>
+
 GOVERNING MESSAGE
 <one sentence: the answer, recommendation, or request>
 
@@ -233,9 +245,23 @@ BUILDING BLOCKS: <from the intake menu>
 ASSUMPTIONS / GAPS: <what you assumed; what evidence is missing for which headline>
 ```
 
+Fill the audience strategy first: it decides which evidence each headline needs. If the user hasn't said who decides or who else will be there, ask (intake Q2) rather than guess.
+
 **Worked example (fictional)**
 
 ```
+AUDIENCE STRATEGY
+Decides: the board chair | supportive, worried about staff morale | that staff aren't asked to work more hours
+Also there: the head of libraries | cautious | that evening opening is safe and staffed
+The ask: approve a six-month pilot + agree three measures of success
+How hard to accept, and why: mixed: the head of libraries expects staff resistance to evening shifts
+How we'll convince them:
+  credibility: door counts and survey data; methodology in the appendix
+  their priorities: "same hours, different times"; name the staff concern and answer it
+  logic: demand has moved → the rota hasn't → moving two shifts fixes it at no cost
+  in it for them: more visitors served without new budget; a pilot, not a permanent change
+Back-ups: capacity assumption (55 visitors per staff-hour) → sensitivity slide in the appendix
+
 GOVERNING MESSAGE
 A demand-led timetable would let the same staff support ~20% more visitors.
 

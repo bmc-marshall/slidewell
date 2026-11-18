@@ -20,8 +20,10 @@ You are reviewing a deck someone else built. Your job is to find what's wrong, n
 10. **What can come off?** Is anything on the slide repeating the headline (a "so what" strap), showing the same numbers twice (a chart *and* a table), out of scope for the decision, or there for a different audience (a CEO quote in an internal deck)? Name each element that could go (finishing-standard §1, "take things off"). *Should fix.*
 11. **Supplied text kept?** Compare every bullet, label, and quote with the storyboard or brief you were given. Any wording that changed is *must fix*, unless the builder flagged it as a suggestion.
 12. **Chart titles and panel headers describe; only the headline concludes.** A chart title that states a finding is *should fix* (charts.md §5).
-13. **Matches the rest of the deck?** New slides use the same text sizes, headline formatting, and box styles as comparable existing slides.
-14. **Generic look.** Does this deck have its own identity: a palette and motif drawn from its subject, used in at least three roles? Or could it be any deck? Is any slide mostly a grey placeholder with little else?
+13. **Matches the rest of the deck?** New slides use the same text sizes, headline formatting, and box styles as comparable existing slides. A slide that mirrors another (same layout, different inputs) copies it element by element: icons, spacing, borders or none.
+14. **Nothing added that wasn't asked for?** Any box, outline, or fill around a note or a list that the sketch didn't show and the deck doesn't use elsewhere? Any filled text box on the background? If the slide came from a sketch, do the arrows follow the drawn type and mapping? *Should fix.*
+15. **Free-standing notes spaced?** Does each note or callout sit halfway between the content above it and the footer bar (finishing-standard §5)?
+16. **Generic look.** Does this deck have its own identity: a palette and motif drawn from its subject, used in at least three roles? Or could it be any deck? Is any slide mostly a grey placeholder with little else?
 
 ## Then, for each slide
 
@@ -29,7 +31,7 @@ You are reviewing a deck someone else built. Your job is to find what's wrong, n
 - **Hierarchy:** can you tell headline, labels, body, and notes apart at a glance?
 - **Emphasis:** is only the primary layer bold? Is one item emphasised by grouping, not by making it bigger?
 - **Charts:** title aligned with the axis labels, clear axis and units, labels inside bars centred, keys small and close or replaced by direct labels (`charts.md` §5b).
-- **Finishing:** corners in one style, no shadows, small open arrowheads, page number low in its corner.
+- **Finishing:** corners in one style, no shadows, small arrowheads in one style (open by default), line weights matching the brackets, page number low in its corner.
 
 ## How to report
 

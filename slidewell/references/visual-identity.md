@@ -22,7 +22,7 @@ Read this at the theme step (SKILL.md §A3) whenever there is no template to fol
 
 Work through these in order and write the results into the theme spec:
 
-1. **Colours from the logo and brand assets.** Sample the logo's colours, then choose a palette strategy (§2). The logo's dominant colour usually becomes the headline colour.
+1. **Colours from the logo and brand assets.** Sample the logo's colours, then choose a palette strategy (§2). If the user gives no colours, logo, or guidelines, extract the hex values from the organization's website and logo as SKILL.md §A3 describes, and show them with their sources at the look checkpoint. The logo's dominant colour usually becomes the headline colour.
 2. **A motif, if the brand offers one** (§3): a simple geometric feature of the logo or product that can become a frame, border, or bullet.
 3. **Typography** (§4): a clean body font, plus a display font echoing the brand's lettering where that helps.
 4. **Imagery:** full-bleed photos on the title and closing slides (and optionally section dividers), with the brand colour or motif overlaid. Content slides stay clean.
@@ -65,7 +65,7 @@ How to find a motif:
 3. Use the chosen motif; if none suits, use no motif (a clean palette and typography are enough).
 
 How to apply a motif:
-- **Use it enough to register:** in at least three consistent roles, e.g. (1) large on the title and closing slides, (2) a small recurring element on every content slide (a corner, an edge, a header tab), and (3) as the marker of the *current* item on trackers or section dividers. Used once, it reads as decoration; used consistently, it becomes the deck's signature.
+- **Use it enough to register:** usually in about three consistent roles (a guide, not a target; fewer if more would crowd the slides), e.g. (1) large on the title and closing slides, (2) a small recurring element on every content slide (a corner, an edge, a header tab), and (3) as the marker of the *current* item on trackers or section dividers. Used once, it reads as decoration; used consistently, it becomes the deck's signature.
 - Use it **only if the brand genuinely offers one**: a clean geometric element that survives being simplified. Don't force a motif onto a brand without one.
 - Keep it **sparing and fixed in position**: the same corners or edges on every slide, drawn from the theme spec like any recurring element.
 - **Bookend with it:** introduce it on the title slide and close with it, so it reads as intentional.
@@ -109,7 +109,7 @@ Decide the vocabulary in the theme spec (which shape means what, in which size a
 - Position each pill from the measured text and check every one on the rendered slide.
 - In the delivery note, tell the user that highlights are separate shapes behind the text: if they edit the wording or change the font, they'll need to nudge the pills too.
 
-**Icons.** Use one icon set in one style (all outline or all solid), one stroke weight, and one colour, either plain or in identical solid circles. Give each icon one meaning and keep it (the same "search" icon always means research). Use icons as column or section markers, not as decoration on every bullet. `slidekit.icon()` draws from the bundled open-licence set (Lucide, ISC licence); the names are listed in `assets/icons.txt`.
+**Icons.** Use one icon set in one style (all outline or all solid), one stroke weight, and one colour, either plain or in identical solid circles. Give each icon one meaning and keep it (the same "search" icon always means research). Choose icons by the most direct association with the point: people for a team or crew, a clock for timing, a calendar for dates, a cloud for weather. Use icons as column or section markers, not as decoration on every bullet. `slidekit.icon()` draws from the bundled open-licence set (Lucide, ISC licence); the names are listed in `assets/icons.txt`.
 
 ## 4c. Imagery
 
@@ -146,6 +146,8 @@ Build the layout anyway with **placeholder frames** (`slidekit.photo(...)` witho
 - Use logos only if the user supplies them or confirms they may be used.
 
 ## 5. Engaging, spoken decks
+
+**Slides that will be presented, and one-off pitch slides, should be visually distinctive.** Use the brand boldly: a colour band behind the headline, a filled card for the ask, a strong motif. Plain columns of text on white read as mundane, however tidy they are. *Why:* a presented slide competes for attention with the speaker and the room; a one-slide pitch has to make an impression on its own. A deck that's read can be quieter, because the reader has chosen to spend the time.
 
 Some decks are meant to be *talked through*: a briefing, a teaching session, a talk. They follow the same rules but use them differently. An explainer on a national health system, delivered to an audience from another country, showed the techniques:
 - **Conversational headlines in the header bar:** "Why should we think about other healthcare systems?", "What *is* the health service?", "Yes… but what *is* it?". Questions are fine here (storyline-examples §2) because the speaker answers them aloud.

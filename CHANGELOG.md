@@ -1,5 +1,45 @@
 # Changelog
 
+## 1.4.0 — November 2026
+
+From a real revision (three slides added to a client deck from a hand-drawn sketch), the author's corrections to it, and three blind tests (one run each of two and then four versions, then three runs each of v1.2.0 and v1.4.0). Folds in the unreleased 1.3.0 changes.
+
+**How rules are written**
+- Rules stay firm by default, each with its *why*. Exceptions are written into the rule and come only from evidence (the author's feedback, an approved deck), never from the agent's own sense of what looks better. Techniques are marked as techniques.
+- **The client's format wins when revising,** unless the user asks to improve it (Revise step 0 asks which). The checker's findings on the deck's own conventions are reported, not fixed: new `check_deck.py --keep-format`.
+- **Ask whether feedback is general.** When a correction could become a standing rule, ask in one line whether it applies generally or to this deck.
+
+**Revise mode**
+- Read the finishing standard in full and run at least one review round before delivering new or redesigned slides.
+- A new slide that mirrors an existing one copies it element by element.
+- **Working from a sketch:** draw only what's drawn and keep what's drawn (a deliberate element such as a dashed box or arrow type beats the deck's habits); details sketched roughly (headers, fonts, fills) come from the deck, and outlined boxes don't mean "no fill". Follow the drawn mapping and order, straight between level items, without copying wobbles; ask or flag rather than substitute a "more logical" mapping; check uncertain handwriting and list it.
+
+**Finishing standard**
+- **Text sizes depend on use:** the floors are for presented decks; a deck that's read can use 12 pt main and 11 pt supporting text. New `check_deck.py --read`.
+- **Line breaks:** one or two lines break at a phrase boundary; three or more keep an even shape. Parallel points wrap to similar shapes (an aim).
+- **Boxes:** general comments get no box unless the deck boxes them; an item in a set of boxes takes the set's style, and a secondary item looks secondary, signalled once (a dashed box doesn't also need grey text). A fill matching the background is left off.
+- **Space:** content is balanced between the headline and the footer first; a separate note sits halfway between content and footer; captions start at the content margin.
+- **Alignment:** side-by-side labels, including those in tiles and cards, are top-aligned.
+- **Icons:** icon shapes are sized to their content and match in size on a slide and across slides; text and icons pair with fills by readability (dark on light, light on dark).
+- **Arrows:** open arrowheads by default, one style per deck; line weights match the deck's brackets; "one arrow looks like one arrow" is judged by its look; arrows from a column start on one aligned line, bend only where they must, and converge about halfway between labels and target. Technique: invisible anchor boxes for smooth curves.
+- **Callouts:** technique: a smaller callout behind the main one places the pointer.
+- **Fonts and corners:** don't choose Calibri, but a client's fonts win; one corner style per deck unless the user's deck or brief deliberately mixes them.
+
+**Charts:** when every bar carries its value, keep the value axis to a few round steps.
+
+**Brand and look**
+- **Brand colours are extracted, not guessed:** find the official site and any published brand guide (including copies on partner or project sites), read the logo's and site's colours, and show each value with its source. If nothing official is reachable, approximate from reputable descriptions and say so; the neutral default is the last resort.
+- For a new deck with no template, ask whether the user wants two or three full looks to choose from; if they're away, build one and describe the alternatives.
+- The motif's "three roles" is a guide, not a target.
+
+- **Issues summary at the end of every report:** one bullet per slide, with a severity (high, medium, low), covering problems kept because the client's format wins, problems on slides not asked about, and judgement calls to confirm.
+- **Sources:** any slide that states a figure carries a source line (superscript note numbers for individual figures); new data without a source is marked "[to be confirmed]", not given the existing source.
+- **Shadows:** match a client deck's shadows when keeping its format, and flag them in the issues summary; never add them otherwise.
+- **Mirrored slides with fewer items:** centre when the original's positions would leave a lot of space below; otherwise keep the original's top position.
+- **Presented and pitch slides are visually distinctive:** bold use of the brand rather than plain columns on white. Icons are chosen by the most direct association (people for a crew, a clock for timing).
+
+**Review brief:** questions on mirrored slides, sketch fidelity, fills, secondary signals, balance, alignment and readability. Bold lead-ins in the highlight colour; headlines that still match any added groupings.
+
 ## 1.2.0 — November 2026
 
 From building and reviewing two new decks (a co-branded proposal and a brand workshop), merged with 1.1.1.

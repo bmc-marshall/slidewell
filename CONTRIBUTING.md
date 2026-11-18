@@ -17,7 +17,7 @@ The tests rebuild every example deck and require zero checker errors. On Linux, 
 
 ## Style
 
-The instructions are written for Claude to follow, in plain English: say what to do and why, give one worked example, and keep each rule in one place. Examples use only invented organisations, people and figures.
+The instructions are written for Claude to follow, in plain English: say what to do and why, give one worked example, and keep each rule in one place. A rule is firm by default; write its exceptions into it, and take them only from evidence (feedback, an approved deck). Before turning a correction into a rule, check whether it was general or about one deck. Mark techniques as techniques. Examples use only invented organisations, people and figures.
 
 ## Releases
 

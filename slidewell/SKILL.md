@@ -153,7 +153,8 @@ Send the .pptx with a short **QA report**:
 - what the deck contains, in two or three lines (don't describe every slide);
 - the review rounds: how many ran, the main issues found and fixed, and anything left open with the reason;
 - any rule you deliberately flexed and why;
-- what the user should check themselves (fonts on their machine, data you marked as assumed, animated slides in Slide Show, photos to drop into placeholders).
+- what the user should check themselves (fonts on their machine, data you marked as assumed, animated slides in Slide Show, photos to drop into placeholders);
+- **an issues summary: one bullet per slide that has an issue,** with its severity (high, medium or low) and what it is, for example: "Slide 6 (low): body text 12 pt, below the 16 pt standard; kept to match the deck", "Slide 4 (medium): 'No fix proposed' sits mid-list; consider moving it last", "Slide 2 (high): summary says 74%, chart now says 71%". Include problems you kept because the client's format wins, problems on slides you weren't asked to change, and judgement calls the user should confirm.
 
 A missing or thin QA report tells the user QA didn't really happen, so never skip it.
 
@@ -187,7 +188,7 @@ Revisions are where AI-built decks usually get worse. Work like this:
    - **Placeholder slides:** if the deck has slides marked to be replaced ("Replace this slide with your revised version of slide 12"), build the new version there and leave the original untouched as the "before". Leave slides meant for the user's own writing (a reflection, their assessment) for them, unless they ask you to draft them.
 4. **Save a new version** (`deck_v2.pptx`) instead of overwriting, unless the user asks otherwise.
 5. Run `python scripts/compare_versions.py old.pptx new.pptx --focus <slides you were asked to change>`. Every UNEXPECTED change is a regression until proven otherwise: undo it. Then run the full QA loop on every changed slide and its neighbours, **plus** a check of each line in the constraints log.
-6. Report what changed, and any request you couldn't satisfy without breaking another constraint (and the trade-off), rather than silently choosing.
+6. Report what changed, and any request you couldn't satisfy without breaking another constraint (and the trade-off), rather than silently choosing. End with the issues summary (Deliver, above).
 
 ## C. Options
 

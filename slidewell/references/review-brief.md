@@ -13,7 +13,7 @@ You are reviewing a deck someone else built. Your job is to find what's wrong, n
 3. **Same place, every slide.** Do chart titles, charts, panel headers, decision bars, and trackers sit in the same position as on the neighbouring slides of the same kind?
 4. **Wrapping.** Any orphans (one word alone on a last line)? Any headline that breaks early, or leaves one or two words on line two? Any word broken mid-word? Any body line much shorter than the lines around it?
 5. **Alignment.** Are parallel items exactly aligned? Are labels centred on the bars or shapes they label? Are side points level with the plotted data? Are markers between items exactly halfway?
-6. **Colour roles.** Is the topic label distinct from the headline? Is each fill paired with the same text colour as elsewhere in the deck? Is the accent used only for the one thing to notice?
+6. **Colour roles.** Is the topic label distinct from the headline? Is each fill paired with the same text colour as elsewhere in the deck? Is the accent used only for the one thing to notice? Are bold lead-ins ("Mitigation:", "Peak crossings:") in the deck's highlight colour?
 7. **Padding.** Is text pressed against the edge of its box (a price touching the bottom of its card, a label touching a border)?
 8. **Collisions.** Does anything overlap anything else (labels over placeholders, bars or each other, text over a photo without an overlay)? Any overlap is *must fix*. So is a chart that looks broken: bars floating above the axis, a line on the wrong scale.
 9. **Accuracy.** Do the numbers add up? Does every duration label state its range? Does commentary match what the chart shows?
@@ -27,7 +27,7 @@ You are reviewing a deck someone else built. Your job is to find what's wrong, n
 
 ## Then, for each slide
 
-- **Story:** does the headline state one message, and does everything on the slide support it?
+- **Story:** does the headline state one message, and does everything on the slide support it? Does it still match the slide after any groupings or labels were added (good practice, not a fixed rule)?
 - **Hierarchy:** can you tell headline, labels, body, and notes apart at a glance?
 - **Emphasis:** is only the primary layer bold? Is one item emphasised by grouping, not by making it bigger?
 - **Charts:** title aligned with the axis labels, clear axis and units, labels inside bars centred, keys small and close or replaced by direct labels (`charts.md` §5b).

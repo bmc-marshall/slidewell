@@ -2,7 +2,7 @@
 
 ## 1.4.0 — November 2026
 
-From a real revision (three slides added to a client deck from a hand-drawn sketch), the author's corrections to it, and two blind tests of four rule variants on nine slides. Folds in the unreleased 1.3.0 changes.
+From a real revision (three slides added to a client deck from a hand-drawn sketch), the author's corrections to it, and three blind tests (one run each of two and then four versions, then three runs each of v1.2.0 and v1.4.0). Folds in the unreleased 1.3.0 changes.
 
 **How rules are written**
 - Rules stay firm by default, each with its *why*. Exceptions are written into the rule and come only from evidence (the author's feedback, an approved deck), never from the agent's own sense of what looks better. Techniques are marked as techniques.
@@ -32,7 +32,13 @@ From a real revision (three slides added to a client deck from a hand-drawn sket
 - For a new deck with no template, ask whether the user wants two or three full looks to choose from; if they're away, build one and describe the alternatives.
 - The motif's "three roles" is a guide, not a target.
 
-**Review brief:** questions on mirrored slides, sketch fidelity, fills, secondary signals, balance, alignment and readability.
+- **Issues summary at the end of every report:** one bullet per slide, with a severity (high, medium, low), covering problems kept because the client's format wins, problems on slides not asked about, and judgement calls to confirm.
+- **Sources:** any slide that states a figure carries a source line (superscript note numbers for individual figures); new data without a source is marked "[to be confirmed]", not given the existing source.
+- **Shadows:** match a client deck's shadows when keeping its format, and flag them in the issues summary; never add them otherwise.
+- **Mirrored slides with fewer items:** centre when the original's positions would leave a lot of space below; otherwise keep the original's top position.
+- **Presented and pitch slides are visually distinctive:** bold use of the brand rather than plain columns on white. Icons are chosen by the most direct association (people for a crew, a clock for timing).
+
+**Review brief:** questions on mirrored slides, sketch fidelity, fills, secondary signals, balance, alignment and readability. Bold lead-ins in the highlight colour; headlines that still match any added groupings.
 
 ## 1.2.0 — November 2026
 

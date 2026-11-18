@@ -109,7 +109,7 @@ Decide the vocabulary in the theme spec (which shape means what, in which size a
 - Position each pill from the measured text and check every one on the rendered slide.
 - In the delivery note, tell the user that highlights are separate shapes behind the text: if they edit the wording or change the font, they'll need to nudge the pills too.
 
-**Icons.** Use one icon set in one style (all outline or all solid), one stroke weight, and one colour, either plain or in identical solid circles. Give each icon one meaning and keep it (the same "search" icon always means research). Use icons as column or section markers, not as decoration on every bullet. `slidekit.icon()` draws from the bundled open-licence set (Lucide, ISC licence); the names are listed in `assets/icons.txt`.
+**Icons.** Use one icon set in one style (all outline or all solid), one stroke weight, and one colour, either plain or in identical solid circles. Give each icon one meaning and keep it (the same "search" icon always means research). Choose icons by the most direct association with the point: people for a team or crew, a clock for timing, a calendar for dates, a cloud for weather. Use icons as column or section markers, not as decoration on every bullet. `slidekit.icon()` draws from the bundled open-licence set (Lucide, ISC licence); the names are listed in `assets/icons.txt`.
 
 ## 4c. Imagery
 
@@ -146,6 +146,8 @@ Build the layout anyway with **placeholder frames** (`slidekit.photo(...)` witho
 - Use logos only if the user supplies them or confirms they may be used.
 
 ## 5. Engaging, spoken decks
+
+**Slides that will be presented, and one-off pitch slides, should be visually distinctive.** Use the brand boldly: a colour band behind the headline, a filled card for the ask, a strong motif. Plain columns of text on white read as mundane, however tidy they are. *Why:* a presented slide competes for attention with the speaker and the room; a one-slide pitch has to make an impression on its own. A deck that's read can be quieter, because the reader has chosen to spend the time.
 
 Some decks are meant to be *talked through*: a briefing, a teaching session, a talk. They follow the same rules but use them differently. An explainer on a national health system, delivered to an audience from another country, showed the techniques:
 - **Conversational headlines in the header bar:** "Why should we think about other healthcare systems?", "What *is* the health service?", "Yes… but what *is* it?". Questions are fine here (storyline-examples §2) because the speaker answers them aloud.

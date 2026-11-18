@@ -16,7 +16,7 @@ If the user says "just go" or won't be around to answer, take the most reasonabl
 - *Findings, e.g.:* "The steering group should approve option B. Our answer: a phased joint venture gives the most value for the least risk."
 - *Workshop, e.g.:* "Program directors leave understanding strategic planning and signed up to take part in ours. Core message: it's a simple, repeatable set of questions, not a consultant exercise."
 
-**2. Who's the audience?** (Position: for, neutral, or against? Interests: what do they know and care about? Style: detail or summary, analysis or recommendation? Expectations: update, decision, training, workshop?)
+**2. Who's the audience?** Who makes the decision, and who else will be in the room or read the deck? For each that matters: position (for, neutral, or against?), interests (what do they know and care about?), style (detail or summary, analysis or recommendation?). And what should they do afterwards: the decision, plus anything else they need to agree? *Why:* the decision-maker and the people who influence them often need different evidence; a deck aimed at the room as one group answers neither well.
 - *Findings, e.g.:* "Six executives across three government bodies. Broadly supportive but one is skeptical about cost. They want the recommendation, not the analysis."
 - *Workshop, e.g.:* "About 15 program directors at a nonprofit. Mixed: some skeptical of 'consultant speak'. Practical people who want to know what this means for their day job."
 
@@ -47,6 +47,9 @@ If the user says "just go" or won't be around to answer, take the most reasonabl
 
 **7. Must-include or must-avoid?** (Data that has to appear, sensitivities, words the client dislikes.)
 - *e.g.:* "Must show the cost waterfall. Don't name the other bidders. They say 'members', not 'customers'."
+
+**7b. Speaker notes?** (presented decks only) Would you like speaker notes on each slide: the headline to say, how to read the slide, the key points, and the link to the next slide?
+- *e.g.:* "Yes, I'll be presenting without much prep time." or "No, I know the material."
 
 **8. Fonts on the presenting machine** (only if matching a brand that uses a non-standard font).
 - *e.g.:* "Yes, the brand font is installed on my laptop." or "Not sure, so use a safe alternative."

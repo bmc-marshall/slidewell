@@ -290,3 +290,17 @@ def test_read_and_keep_format_options(tmp_path):
     assert not any(r == "font-size" and l == "error" for l, r in run("--read"))   # but passes for a read deck
     kept = run("--keep-format")
     assert ("warning", "font-size") in kept and ("error", "font-size") not in kept
+
+
+def test_speaker_notes_have_four_parts(tmp_path):
+    """v1.5.0: kit.notes writes headline, orientation, key points and transition into the slide's notes."""
+    from slidekit import Kit
+    kit = Kit()
+    s = kit.new_slide()
+    kit.frame(s, 1, None, "Evening visits have nearly doubled their share since 2019", "Source: test data")
+    kit.notes(s, "Evening visits have nearly doubled their share.", "Each column is a year; orange is after 4pm.",
+              ["62% of visits now come after 4pm", "Most evening visitors come to study"], "So who are these visitors?")
+    out = tmp_path / "notes.pptx"; kit.save(str(out))
+    text = Presentation(str(out)).slides[0].notes_slide.notes_text_frame.text
+    for part in ("HEADLINE:", "ORIENTATION:", "KEY POINTS:", "- 62% of visits", "TRANSITION:"):
+        assert part in text

@@ -7,7 +7,7 @@ From a real revision: adding three slides to an existing deck from a hand-drawn 
 - **Revise mode reads the finishing standard and runs a review round** before delivering new or redesigned slides; most revision mistakes broke rules it already stated.
 - **New slides that mirror an existing one copy it element by element** (text size, icons, spacing, borders or none), not a different slide or a generic box.
 - **Working from a sketch:** draw only what's drawn (no added boxes, outlines or fills); follow the drawn arrow type, mapping and order, and ask or flag rather than substituting a "more logical" mapping; check uncertain handwriting against the deck and sources and list what was unclear.
-- **No machinery around notes:** a note or list of labels gets no box unless the deck already uses one; text boxes on the slide background have no fill.
+- **No machinery around notes:** a note or list of labels gets no box unless the deck already uses one; a text box filled in the same colour as the background behind it is left unfilled.
 - **Free-standing blocks are distributed:** a note between content and the footer bar sits halfway between them; a lone image is centred.
 - **Arrows:** arrowheads are open by default and one style across the deck (filled is acceptable where the deck already uses it); line weights match the deck's brackets; "one arrow looks like one arrow" is judged by how the arrow looks, not how it's built; mapping arrows use angular or gently curved routes, built from straight and curved segments joined at invisible anchor boxes so they read as one line.
 - **Callouts:** a second, smaller callout behind the main one places the pointer where it should be; each point on its own line.

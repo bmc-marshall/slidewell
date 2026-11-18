@@ -21,7 +21,7 @@ You are reviewing a deck someone else built. Your job is to find what's wrong, n
 11. **Supplied text kept?** Compare every bullet, label, and quote with the storyboard or brief you were given. Any wording that changed is *must fix*, unless the builder flagged it as a suggestion.
 12. **Chart titles and panel headers describe; only the headline concludes.** A chart title that states a finding is *should fix* (charts.md §5).
 13. **Matches the rest of the deck?** New slides use the same text sizes, headline formatting, and box styles as comparable existing slides. A slide that mirrors another (same layout, different inputs) copies it element by element: icons, spacing, borders or none.
-14. **Nothing added that wasn't asked for?** Any box, outline, or fill around a note or a list that the sketch didn't show and the deck doesn't use elsewhere? Any filled text box on the background? If the slide came from a sketch, do the arrows follow the drawn type and mapping? *Should fix.*
+14. **Nothing added that wasn't asked for?** Any box, outline, or fill around a note or a list that the sketch didn't show and the deck doesn't use elsewhere? Any text box filled in the same colour as the background behind it? If the slide came from a sketch, do the arrows follow the drawn type and mapping? *Should fix.*
 15. **Free-standing notes spaced?** Does each note or callout sit halfway between the content above it and the footer bar (finishing-standard §5)?
 16. **Generic look.** Does this deck have its own identity: a palette and motif drawn from its subject, used in at least three roles? Or could it be any deck? Is any slide mostly a grey placeholder with little else?
 

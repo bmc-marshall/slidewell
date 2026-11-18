@@ -268,3 +268,25 @@ def test_lockup_divider_is_midway(tmp_path):
     assert all(sh.text_frame.word_wrap for sh in boxes)
     out = tmp_path / "lockup.pptx"; kit.save(str(out))
     assert not [f for f in check(out) if f["rule"] == "divider"]
+
+
+def test_read_and_keep_format_options(tmp_path):
+    """v1.4.0: --read lowers body-text floors; --keep-format reports a client deck's own sizes and fonts as warnings."""
+    from slidekit import Kit
+    kit = Kit()
+    s = kit.new_slide()
+    kit.frame(s, 1, None, "Residents most want later opening on weekdays", "Source: test data")
+    body = ("Most residents who answered the survey said they would visit more often if the building stayed open "
+            "until eight on weekdays, especially parents with school-age children.")
+    kit.text(s, 0.6, 2.2, 8.0, 1.6, body, 12, smart=False)
+    out = tmp_path / "small.pptx"; kit.save(str(out))
+
+    def run(*flags):
+        r = subprocess.run([sys.executable, str(SCRIPTS / "check_deck.py"), str(out), "--json", *flags],
+                           capture_output=True, text=True)
+        return [(f["level"], f["rule"]) for f in json.loads(r.stdout)]
+
+    assert ("error", "font-size") in run()                       # 12pt body fails the presented-deck floor
+    assert not any(r == "font-size" and l == "error" for l, r in run("--read"))   # but passes for a read deck
+    kept = run("--keep-format")
+    assert ("warning", "font-size") in kept and ("error", "font-size") not in kept

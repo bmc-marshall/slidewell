@@ -51,7 +51,7 @@ If the user says "just go" or won't be around to answer, take the most reasonabl
 **8. Fonts on the presenting machine** (only if matching a brand that uses a non-standard font).
 - *e.g.:* "Yes, the brand font is installed on my laptop." or "Not sure, so use a safe alternative."
 
-**8b. Brand motif?** Is there a shape, symbol, or feature of the brand you'd like the slides to echo? (If not, I'll suggest two or three options from the logo or website and show you quick mock-ups to pick from.)
+**8b. Brand motif?** Is there a shape, symbol, or feature of the brand you'd like the slides to echo? (If not, I'll suggest two or three options from the logo or website and show you quick mock-ups to pick from.) For a new deck with no template, also ask whether they'd like two or three full looks to choose from, or one.
 - *e.g.:* "The corner bracket in our logo." or "No idea, show me options."
 
 **8c. Logos and photos?** Which logos should appear, and where (a co-branded lockup bottom-left on every slide, one logo top-right, or title and closing only)? Do you have photos to use? (If not, I'll build placeholder frames at the right size, labelled with the photo each one needs.)

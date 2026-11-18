@@ -207,6 +207,7 @@ class Deck:
         self.prs = Presentation(path)
         self.W, self.H = self.prs.slide_width, self.prs.slide_height
         self.theme = theme or {}
+        self.read = self.theme.get("use") == "read"   # set by --read or theme "use": "read"
         self.theme_colors, self.major, self.minor = self._theme()
         self.default_size = self._default_size()
 
@@ -445,16 +446,18 @@ def check_text(deck, idx, infos, roles, out):
                 if fam.lower() in BANNED_FONTS and fam not in (deck.major, deck.minor):   # a template's own theme font is the brand's choice
                     styles["banned:" + fam] += 1
                 tag = " (inherited size, verify)" if inherited else ""
+                body_min, long_min = (11, 12) if deck.read else (14, 16)   # a deck that's read, not presented, can use smaller body text
+                floors = "read deck: main ≥12, supporting ≥11" if deck.read else "main ≥16, supporting ≥14"
                 cand = None
                 if size < 10:
                     cand = (3, "error", f"{size:g}pt text in '{i.name}' (minimum 10pt for any text){tag}: {short(r.text)!r}")
-                elif size < 14 and not is_small_ok and words > 12:
-                    cand = (2, "error", f"{size:g}pt body text in '{i.name}' (main ≥16, supporting ≥14; 10–13 only for sources, notes, chart labels, short annotations){tag}: {short(i.text)!r}")
-                elif size < 14 and not is_small_ok and not (size >= 10 and words <= 4 and (i.b < 0.1 * deck.H or i.t > 0.9 * deck.H)):
+                elif size < body_min and not is_small_ok and words > 12:
+                    cand = (2, "error", f"{size:g}pt body text in '{i.name}' ({floors}; smaller only for sources, notes, chart labels, short annotations){tag}: {short(i.text)!r}")
+                elif size < body_min and not is_small_ok and not (size >= 10 and words <= 4 and (i.b < 0.1 * deck.H or i.t > 0.9 * deck.H)):
                     # (navigation labels and trackers at 10-13pt in the top or bottom band are allowed: finishing-standard §4)
                     cand = (1, "warning", f"{size:g}pt short text in '{i.name}': OK only if it's an annotation or label{tag}: {short(i.text)!r}")
-                elif size < 16 and words > 25 and not i.fill and not i.line:
-                    cand = (0, "warning", f"{size:g}pt for a long text block in '{i.name}': main text should be ≥16pt{tag}")
+                elif size < long_min and words > 25 and not i.fill and not i.line:
+                    cand = (0, "warning", f"{size:g}pt for a long text block in '{i.name}': main text should be ≥{long_min}pt{tag}")
                 if cand and (size_issue is None or cand[0] > size_issue[0]):
                     size_issue = cand
         if size_issue:
@@ -1883,9 +1886,14 @@ def main():
     ap.add_argument("--slides", help="e.g. 3,5-7 (default: all)")
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--numbers", action="store_true", help="list every number on each slide (text and chart data) for the accuracy pass, then exit")
+    ap.add_argument("--read", action="store_true", help="the deck will be read, not presented: lower body-text floors (main 12pt, supporting 11pt)")
+    ap.add_argument("--keep-format", action="store_true",
+                    help="revising a client deck whose format the user wants kept: report font and text-size findings as warnings, not errors")
     args = ap.parse_args()
 
     theme = json.load(open(args.theme)) if args.theme else {}
+    if args.read:
+        theme = dict(theme, use="read")
     deck = Deck(args.pptx, theme)
     slides = list(deck.prs.slides)
     wanted = parse_slides(args.slides, len(slides))
@@ -1948,6 +1956,10 @@ def main():
         findings.append(Finding("warning", "palette", f"About {len(distinct)} distinct non-neutral colours in use (max 6 + labelled RAG): {', '.join(distinct[:10])}"))
 
     findings = aggregate(findings)
+    if args.keep_format:   # the client's format wins (finishing-standard, intro): these are information to report, not errors to fix
+        for f in findings:
+            if f.level == "error" and f.rule in ("font-size", "fonts"):
+                f.level, f.msg = "warning", "Deck's own format (kept): " + f.msg
     if args.json:
         print(json.dumps([f.as_dict() for f in findings], indent=2))
     else:

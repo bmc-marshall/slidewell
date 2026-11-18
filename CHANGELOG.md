@@ -1,20 +1,38 @@
 # Changelog
 
-## 1.3.0 — November 2026
+## 1.4.0 — November 2026
 
-From a real revision: adding three slides to an existing deck from a hand-drawn sketch, then reviewing the author's corrections.
+From a real revision (three slides added to a client deck from a hand-drawn sketch), the author's corrections to it, and two blind tests of four rule variants on nine slides. Folds in the unreleased 1.3.0 changes.
 
-- **Brand colours are extracted, not guessed.** With no template and no brand input for a real organization, the theme step finds its official site, reads hex values from the logo (SVG fills or Pillow sampling) and the site's CSS, prefers published guidelines, and shows each colour with its source at the look checkpoint. `visual-identity.md` points to the steps.
-- **Revise mode reads the finishing standard and runs a review round** before delivering new or redesigned slides; most revision mistakes broke rules it already stated.
-- **New slides that mirror an existing one copy it element by element** (text size, icons, spacing, borders or none), not a different slide or a generic box.
-- **Working from a sketch:** draw only what's drawn, and keep what's drawn: a deliberately drawn element (a box, an arrow type) beats the deck's usual style, while everything sketched roughly (headers, fonts, fills) comes from the deck. Follow the drawn arrow type, mapping and order, without adding bends; ask or flag rather than substituting a "more logical" mapping; check uncertain handwriting against the deck and sources and list what was unclear.
-- **No machinery around notes:** a general comment or list of labels gets no box unless the deck already uses one, but an item that continues a set of boxes stays boxed (clear with a border if it's additional); a text box filled in the same colour as the background behind it is left unfilled.
-- **Space is balanced between the fixed elements:** content (an image with its caption) is distributed between the headline and the footer, then a separate note sits halfway between the content and the footer bar. Captions are left-aligned with the margin, not centred.
-- **Arrows:** arrowheads are open by default and one style across the deck (filled is acceptable where the deck already uses it); line weights match the deck's brackets; "one arrow looks like one arrow" is judged by how the arrow looks, not how it's built; mapping arrows use angular or gently curved routes, built from straight and curved segments joined at invisible anchor boxes so they read as one line.
-- **Arrows from a column start on one aligned line** and bend only where they must.
-- **Icons:** shapes holding an icon are sized to the icon and its row, and all icon shapes and icons match in size on a slide and across slides. Text and icons are dark on light fills and white or light on dark fills; readability decides.
-- **Callouts:** a second, smaller callout behind the main one places the pointer where it should be; each point on its own line.
-- **Review brief:** new questions on mirrored slides, added machinery, sketch fidelity and note spacing.
+**How rules are written**
+- Rules stay firm by default, each with its *why*. Exceptions are written into the rule and come only from evidence (the author's feedback, an approved deck), never from the agent's own sense of what looks better. Techniques are marked as techniques.
+- **The client's format wins when revising,** unless the user asks to improve it (Revise step 0 asks which). The checker's findings on the deck's own conventions are reported, not fixed: new `check_deck.py --keep-format`.
+- **Ask whether feedback is general.** When a correction could become a standing rule, ask in one line whether it applies generally or to this deck.
+
+**Revise mode**
+- Read the finishing standard in full and run at least one review round before delivering new or redesigned slides.
+- A new slide that mirrors an existing one copies it element by element.
+- **Working from a sketch:** draw only what's drawn and keep what's drawn (a deliberate element such as a dashed box or arrow type beats the deck's habits); details sketched roughly (headers, fonts, fills) come from the deck, and outlined boxes don't mean "no fill". Follow the drawn mapping and order, straight between level items, without copying wobbles; ask or flag rather than substitute a "more logical" mapping; check uncertain handwriting and list it.
+
+**Finishing standard**
+- **Text sizes depend on use:** the floors are for presented decks; a deck that's read can use 12 pt main and 11 pt supporting text. New `check_deck.py --read`.
+- **Line breaks:** one or two lines break at a phrase boundary; three or more keep an even shape. Parallel points wrap to similar shapes (an aim).
+- **Boxes:** general comments get no box unless the deck boxes them; an item in a set of boxes takes the set's style, and a secondary item looks secondary, signalled once (a dashed box doesn't also need grey text). A fill matching the background is left off.
+- **Space:** content is balanced between the headline and the footer first; a separate note sits halfway between content and footer; captions start at the content margin.
+- **Alignment:** side-by-side labels, including those in tiles and cards, are top-aligned.
+- **Icons:** icon shapes are sized to their content and match in size on a slide and across slides; text and icons pair with fills by readability (dark on light, light on dark).
+- **Arrows:** open arrowheads by default, one style per deck; line weights match the deck's brackets; "one arrow looks like one arrow" is judged by its look; arrows from a column start on one aligned line, bend only where they must, and converge about halfway between labels and target. Technique: invisible anchor boxes for smooth curves.
+- **Callouts:** technique: a smaller callout behind the main one places the pointer.
+- **Fonts and corners:** don't choose Calibri, but a client's fonts win; one corner style per deck unless the user's deck or brief deliberately mixes them.
+
+**Charts:** when every bar carries its value, keep the value axis to a few round steps.
+
+**Brand and look**
+- **Brand colours are extracted, not guessed:** find the official site and any published brand guide (including copies on partner or project sites), read the logo's and site's colours, and show each value with its source. If nothing official is reachable, approximate from reputable descriptions and say so; the neutral default is the last resort.
+- For a new deck with no template, ask whether the user wants two or three full looks to choose from; if they're away, build one and describe the alternatives.
+- The motif's "three roles" is a guide, not a target.
+
+**Review brief:** questions on mirrored slides, sketch fidelity, fills, secondary signals, balance, alignment and readability.
 
 ## 1.2.0 — November 2026
 

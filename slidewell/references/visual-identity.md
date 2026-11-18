@@ -65,7 +65,7 @@ How to find a motif:
 3. Use the chosen motif; if none suits, use no motif (a clean palette and typography are enough).
 
 How to apply a motif:
-- **Use it enough to register:** in at least three consistent roles, e.g. (1) large on the title and closing slides, (2) a small recurring element on every content slide (a corner, an edge, a header tab), and (3) as the marker of the *current* item on trackers or section dividers. Used once, it reads as decoration; used consistently, it becomes the deck's signature.
+- **Use it enough to register:** usually in about three consistent roles (a guide, not a target; fewer if more would crowd the slides), e.g. (1) large on the title and closing slides, (2) a small recurring element on every content slide (a corner, an edge, a header tab), and (3) as the marker of the *current* item on trackers or section dividers. Used once, it reads as decoration; used consistently, it becomes the deck's signature.
 - Use it **only if the brand genuinely offers one**: a clean geometric element that survives being simplified. Don't force a motif onto a brand without one.
 - Keep it **sparing and fixed in position**: the same corners or edges on every slide, drawn from the theme spec like any recurring element.
 - **Bookend with it:** introduce it on the title slide and close with it, so it reads as intentional.

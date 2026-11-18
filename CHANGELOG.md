@@ -12,7 +12,7 @@ From a real revision: adding three slides to an existing deck from a hand-drawn 
 - **Space is balanced between the fixed elements:** content (an image with its caption) is distributed between the headline and the footer, then a separate note sits halfway between the content and the footer bar. Captions are left-aligned with the margin, not centred.
 - **Arrows:** arrowheads are open by default and one style across the deck (filled is acceptable where the deck already uses it); line weights match the deck's brackets; "one arrow looks like one arrow" is judged by how the arrow looks, not how it's built; mapping arrows use angular or gently curved routes, built from straight and curved segments joined at invisible anchor boxes so they read as one line.
 - **Arrows from a column start on one aligned line** and bend only where they must.
-- **Icons:** shapes holding an icon are sized to the icon and its row; icons on solid colours are white.
+- **Icons:** shapes holding an icon are sized to the icon and its row, and all icon shapes and icons match in size on a slide and across slides. Text and icons are dark on light fills and white or light on dark fills; readability decides.
 - **Callouts:** a second, smaller callout behind the main one places the pointer where it should be; each point on its own line.
 - **Review brief:** new questions on mirrored slides, added machinery, sketch fidelity and note spacing.
 

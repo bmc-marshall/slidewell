@@ -4,6 +4,7 @@
 
 From a real revision: adding three slides to an existing deck from a hand-drawn sketch, then reviewing the author's corrections.
 
+- **Brand colours are extracted, not guessed.** With no template and no brand input for a real organization, the theme step finds its official site, reads hex values from the logo (SVG fills or Pillow sampling) and the site's CSS, prefers published guidelines, and shows each colour with its source at the look checkpoint. `visual-identity.md` points to the steps.
 - **Revise mode reads the finishing standard and runs a review round** before delivering new or redesigned slides; most revision mistakes broke rules it already stated.
 - **New slides that mirror an existing one copy it element by element** (text size, icons, spacing, borders or none), not a different slide or a generic box.
 - **Working from a sketch:** draw only what's drawn (no added boxes, outlines or fills); follow the drawn arrow type, mapping and order, and ask or flag rather than substituting a "more logical" mapping; check uncertain handwriting against the deck and sources and list what was unclear.

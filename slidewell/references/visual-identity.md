@@ -22,7 +22,7 @@ Read this at the theme step (SKILL.md §A3) whenever there is no template to fol
 
 Work through these in order and write the results into the theme spec:
 
-1. **Colours from the logo and brand assets.** Sample the logo's colours, then choose a palette strategy (§2). The logo's dominant colour usually becomes the headline colour.
+1. **Colours from the logo and brand assets.** Sample the logo's colours, then choose a palette strategy (§2). If the user gives no colours, logo, or guidelines, extract the hex values from the organization's website and logo as SKILL.md §A3 describes, and show them with their sources at the look checkpoint. The logo's dominant colour usually becomes the headline colour.
 2. **A motif, if the brand offers one** (§3): a simple geometric feature of the logo or product that can become a frame, border, or bullet.
 3. **Typography** (§4): a clean body font, plus a display font echoing the brand's lettering where that helps.
 4. **Imagery:** full-bleed photos on the title and closing slides (and optionally section dividers), with the brand colour or motif overlaid. Content slides stay clean.
